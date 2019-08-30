@@ -22,7 +22,7 @@ const Dashboard = () => {
             </Button>
           </Left>
           <Body>
-            <Title>Dashboard</Title>
+            <Title>Dashboard </Title>
           </Body>
           <Right>
             <Button transparent>
