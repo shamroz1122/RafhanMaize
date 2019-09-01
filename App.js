@@ -1,49 +1,80 @@
-import React, {useState,useEffect} from 'react';
+import React, {Component} from 'react';
 import {AppLoading} from 'expo'
 import * as Font from 'expo-font';
 import { StyleSheet, View  } from 'react-native';
-import Home from './src/screens/dashboard/Home';
-import Dashboard from './src/screens/dashboard/Dashboard';
-// import AppNavigator from './src/navigation/StackNavigator';
+import AppNavigator from './src/navigation/AppNavigator';
 import { Ionicons } from '@expo/vector-icons'
+// export App function App(props) {
 
-export default function App(props) {
+//   const [state,setState] = useState({
+//       loading: true,
+//       token: ''
+//   });
 
-  const [state,setState] = useState({
-      loading: true,
-      token: ''
-  });
-
-  const styles = StyleSheet.create({
+//   const styles = StyleSheet.create({
   
-  });
+//   });
 
-  useEffect( ()=>{
-    declareFont()
-  },[])
+//   useEffect( ()=>{
+//     declareFont()
+//   },[])
 
-  const declareFont = async () =>{
-    await Font.loadAsync({
-      Roboto: require("native-base/Fonts/Roboto.ttf"),
-      Roboto_medium: require("native-base/Fonts/Roboto_medium.ttf")
-    });
+//   const declareFont = async () =>{
+//     await Font.loadAsync({
+//       Roboto: require("native-base/Fonts/Roboto.ttf"),
+//       Roboto_medium: require("native-base/Fonts/Roboto_medium.ttf")
+//     });
+ 
+//     setState({ loading: false });
+//   }
 
-    setState({ loading: false });
-  }
+//     if (state.loading) {
+//           return (
+//             <View>
+//               <AppLoading />
+//             </View>
+//           );
+//         }
+//         return ( 
+//           <View style={{flex:1}}>
+//              {/* <AppNavigator /> */}
+//              <AppContainer />
+//           </View>
+//         );
 
-    if (state.loading) {
-          return (
-            <View>
-              <AppLoading />
-            </View>
-          );
+//     }
+
+    class App extends Component {
+      constructor(props) {
+        super(props);
+        this.state = {
+          isReady: false,
+        };
+      }
+
+      async componentDidMount() {
+        await Font.loadAsync({
+          Roboto: require('native-base/Fonts/Roboto.ttf'),
+          Roboto_medium: require('native-base/Fonts/Roboto_medium.ttf'),
+          ...Ionicons.font,
+        });
+        this.setState({ isReady: true });
+      }
+
+      render() {
+        if (!this.state.isReady) {
+          return <AppLoading />;
         }
-        return ( 
+    
+        return (
           <View style={{flex:1}}>
-             {/* <AppNavigator /> */}
-             <Dashboard /> 
+           <AppNavigator />
           </View>
         );
+      }
+
     }
 
+    export default App
 
+ 

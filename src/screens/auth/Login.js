@@ -5,7 +5,7 @@ import logo from '../../../assets/logo.png'
 import Rafhanlogo from '../../../assets/RafhanLogocolor.png'
 import loginBg from '../../../assets/login_bg.png'
 
-function Login(){
+function Login(props){
 
     useEffect( ()=>{
         StatusBar.setBarStyle( 'light-content',true)
@@ -54,39 +54,39 @@ function Login(){
 
     return (
 
-     <KeyboardAvoidingView style={styles.container} behavior="padding" enabled >
-  
-            <ImageBackground source={loginBg} style={{width: '100%', height: '100%'}}>
-                    <View style={styles.imageFlex}>
+        <View style={styles.container}>
+                    <ImageBackground source={loginBg} style={{width: '100%', height: '100%'}}>
+                                <View style={styles.imageFlex}>
 
-                        <View style={styles.ingredionImage}>
-                             <Image  source={logo} style={{ height: 80,width: 125}}/>
-                        </View>
-                        <View style={styles.rafhanImage}> 
-                              <Image  source={Rafhanlogo} style={{ height: 90,width: 140}}/> 
-                        </View>
-                   
-                    </View>
-                
-                    <View style={styles.formFlex}>
-                        <Item >
-                            <Icon active name='person' />
-                            <Input placeholderTextColor="#6CB33E" placeholder='USERNAME'/>
-                        </Item>
-                        <Item >
-                            <Icon active name='lock' />
-                            <Input secureTextEntry={true} placeholderTextColor="#6CB33E" placeholder='PASSWORD'/>
-                        </Item>
-                        <Button block style={styles.button}>
-                            <Text style={{color:'#ffffff'}}>LOGIN</Text>
-                        </Button>
-                    
-                    </View>
+                                    <View style={styles.ingredionImage}>
+                                        <Image  source={logo} style={{ height: 80,width: 125}}/>
+                                    </View>
+                                    <View style={styles.rafhanImage}> 
+                                        <Image  source={Rafhanlogo} style={{ height: 90,width: 140}}/> 
+                                    </View>
+                            
+                                </View>
+                           
+                                <View style={styles.formFlex}>
+                                <KeyboardAvoidingView behavior="padding" enabled >
+                                    <Item >
+                                        <Icon active name='person' />
+                                        <Input placeholderTextColor="#6CB33E" placeholder='USERNAME'/>
+                                    </Item>
+                                    <Item >
+                                        <Icon active name='lock' />
+                                        <Input secureTextEntry={true} placeholderTextColor="#6CB33E" placeholder='PASSWORD'/>
+                                    </Item>
+                                    <Button block style={styles.button} onPress={()=>props.navigation.navigate('Home') }>
+                                        <Text style={{color:'#ffffff'}}>LOGIN</Text>
+                                    </Button>
+                                    </KeyboardAvoidingView>
+                                </View>
+                      
 
-            </ImageBackground>
-               
-      </KeyboardAvoidingView>
-                  
+                        </ImageBackground>
+        </View>
+       
     )
 }
 
