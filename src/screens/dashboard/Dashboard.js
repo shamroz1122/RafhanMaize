@@ -1,145 +1,279 @@
-import React,{useEffect} from 'react'
-import {View, StyleSheet,StatusBar,Image,TouchableOpacity } from 'react-native';
-import { Container, Header, Content, Footer, FooterTab, Button,Card, CardItem, Text,Left,Icon,Right,Body,Thumbnail } from 'native-base'
-import Rafhanlogo from '../../../assets/RafhanLogocolor.png'
+import React, {useEffect} from 'react'
+import { View, Text,StyleSheet,StatusBar,Image,ScrollView } from 'react-native'
+import { Container,H1,DeckSwiper,H2,Thumbnail,Title,Grid,Col,Badge, Header, Content, Card, CardItem, Button, Icon, Left, Body, Right } from 'native-base';
+import { AnimatedCircularProgress } from 'react-native-circular-progress';
 
-function Dashboard(props){
+
+const Dashboard = () => {
 
     useEffect( ()=>{
         StatusBar.setBarStyle( 'light-content',true)
-        StatusBar.setBackgroundColor("#333333")
-      },[])
-
+        StatusBar.setBackgroundColor("#60993A")
+      },[]) 
+  
       const styles = StyleSheet.create({
         header:{
-            backgroundColor:'#ffffff',
-          
+            backgroundColor:'#6DB33F',
         },
-        logoStyle:{
-          flex:1,textAlign:'center',justifyContent:'center',paddingLeft:70
+        container:{
+          backgroundColor:'#E1EFD8'
         },
-        cardItemStyle:{
+        firstTwoCardsStyle:{
           flex:1,
           flexDirection:'row',
-          justifyContent:'flex-end',
-          alignItems:'center'
+          justifyContent:'space-between',
+          alignItems:'center',
+          paddingLeft:15,
+          paddingRight:15,
+          marginBottom:-7
+
         },
-        cardTextStyle:{
+        secondTwoCardsStyle:{
+          flex:1,
+          flexDirection:'row',
+          justifyContent:'space-between',
+          paddingLeft:15,
+          paddingRight:15,
+          marginBottom:-20
+        },
+        thirdCardStyle:{
+          flex:2,
+          paddingLeft:15,
+          paddingRight:15,
+          paddingTop:10
+        },
+        bottomStatsStyle:{
+          flex:1,
+          flexDirection:'row',
+          justifyContent:'space-between',
+          paddingLeft:15,
+          paddingRight:15,
+          paddingTop:30
+        },
+        bottomStatsTextStyle:{
           color:'#ffffff',
-          width:'94%',
+          fontSize:8,
           textAlign:'center'
         },
+        bottomStatsInnerTextStyle:{
+          color:'#fff',
+          textAlign:'center',
+          fontSize:22,
+          fontWeight:'bold',
+          marginStart:10
+        },
+        cardSize:{
+          width:'48%'
+        },
+        buttonText:{
+          fontSize:11
+        },
+        iconFont:{
+          fontSize:27
+        },
+        cardNumber:{
+          fontWeight:'bold'
+        },
         icon:{
-          color:'#ffffff'
+          color:'#cccccc',
+          fontSize:18
         }
-      })
+    })
 
-      const uri = "https://facebook.github.io/react-native/docs/assets/favicon.png";
-     return (
-        <Container style={{backgroundColor:'#F5F5F5'}}>
-        {/* <Header style={styles.header}>
-            <Left>
-              <Button  transparent>
-                <Icon style={{color:'black'}}  name='menu' />
-              </Button>
-            </Left>
-                <View style={styles.logoStyle}>
-                  <Image  source={Rafhanlogo} style={{ height: 60,width: 100}} />
-                </View>
-            <Right>
-              <Button transparent >
-                <Thumbnail small source={{uri:uri}} />
-              </Button>
-            </Right>
-          </Header> */}
-          <Content padder>
-          <Card> 
-       
-
-      
-
-             <TouchableOpacity activeOpacity={1} onPress={()=>props.navigation.navigate('NewOrders') }>
-                   <CardItem   style={{height:95,backgroundColor:'#508630',borderRadius:0}}>
-                <View style={styles.cardItemStyle}> 
-                      <Text style={styles.cardTextStyle}>
-                        NEW ORDERS
-                      </Text>
-                      <Right>
-                      <Button small transparent onPress={()=>props.navigation.navigate('NewOrders') }>
-                        <Icon type="AntDesign" style={styles.icon} name="right"  />
-                      </Button>
-                      </Right>
-                </View>
-            </CardItem>
-            </TouchableOpacity>
-
-            <TouchableOpacity activeOpacity={1} onPress={()=>props.navigation.navigate('MyOrders') }>
-            <CardItem  style={{height:95,backgroundColor:'#415927',borderRadius:0}}>
-            <View style={styles.cardItemStyle}>
-                  <Text style={styles.cardTextStyle}>
-                    MY ORDERS
-                  </Text>
-                  <Right>
-                    <Button small transparent >
-                      <Icon type="AntDesign" style={styles.icon} name="right"  />
-                    </Button>
-                  </Right>
-             
-                </View>
-            </CardItem>
-            </TouchableOpacity>
-
-
-            <TouchableOpacity activeOpacity={1} onPress={()=>props.navigation.navigate('MyProducts') }>
-            <CardItem  style={{height:95,backgroundColor:'#B85D26',borderRadius:0}}>
-            <View style={styles.cardItemStyle}>
-                  <Text style={styles.cardTextStyle}>
-                      MY PRODUCTS
-                  </Text>
-                  <Right>
-                  <Button small transparent >
-                    <Icon type="AntDesign" style={styles.icon} name="right"  />
-                  </Button>
-                  </Right>
-                </View>
-            </CardItem>
-            </TouchableOpacity>
-
-            <TouchableOpacity activeOpacity={1} onPress={()=>props.navigation.navigate('MyCustomers') }>
-            <CardItem  style={{height:95,backgroundColor:'#968223',borderRadius:0}}>
-            <View style={styles.cardItemStyle}>
-                <Text style={styles.cardTextStyle}>
-                    MY CUSTOMERS
-                </Text>
-                <Right>
-                <Button small transparent >
-                  <Icon type="AntDesign" style={styles.icon} name="right"  />
-                </Button>
-                </Right>
-                </View>
-            </CardItem>
-            </TouchableOpacity>
-          <TouchableOpacity activeOpacity={1} onPress={()=>props.navigation.navigate('MyProfile') }>
-            <CardItem   style={{height:95,backgroundColor:'#7C212A',borderRadius:0}}>
-            <View style={styles.cardItemStyle}>
-                  <Text style={styles.cardTextStyle}>
-                      MY PROFILE
-                  </Text>
-                  <Right>
-                  <Button small transparent  onPress={()=>props.navigation.navigate('MyProfile') }>
-                    <Icon type="AntDesign" style={styles.icon} name="right"  />
-                  </Button>
-                  </Right>
-                </View>
-            </CardItem>
-            </TouchableOpacity>
-
-          </Card>
-        </Content>
+    const cards = [
+      {
+        text: '12,250',
+        name: 'Domestic',
+    
+      },
+      {
+          text: '11,250',
+          name: 'Local',
+        },
+        {
+          text: '10,250',
+          name: 'WorldWide',
         
-        </Container>
-  )
+        },
 
+    ];
+
+    return (
+       <Container style={styles.container}>
+        {/* <Header style={styles.header}>
+          <Left>
+            <Button transparent>
+              <Icon type="Octicons" name='three-bars' />
+            </Button>
+          </Left>
+          <Body>
+            <Title>Dashboard </Title>
+          </Body>
+          <Right>
+            <Button transparent>
+              <Icon type="FontAwesome" name='user-circle' />
+            </Button>
+          </Right>
+        </Header> */}
+        <View style={{flex:1}}>
+
+            <View style={styles.firstTwoCardsStyle}>
+              <View style={styles.cardSize}>
+                  <Card>
+                    <CardItem bordered>
+                      <Left>
+                        <Button style={{backgroundColor:'#6DB33F',width: 60,height: 60,borderRadius: 60/2}} >
+                          <Icon  style={styles.iconFont} type="FontAwesome5" name="calendar-check" />
+                        </Button>
+                   
+                        <Body>
+                          <H2 style={styles.cardNumber}>125</H2>
+                          <Text style={styles.buttonText} note>Dilvered Orders</Text>
+                        </Body>
+                      </Left>
+                    </CardItem>
+                  </Card>
+               </View> 
+               <View style={styles.cardSize}>
+                    <Card>
+                        <CardItem bordered>
+                        <Left>
+                            <Button style={{backgroundColor:'#B35644',width: 60,height: 60,borderRadius: 60/2}} >
+                              <Icon  style={styles.iconFont} type="Feather" name="clock" />
+                            </Button>
+                            <Body>
+                              <H2 style={styles.cardNumber}>30</H2>
+                              <Text style={styles.buttonText} note>Pending Orders</Text>
+                            </Body>
+                          </Left>
+                        </CardItem>
+                    </Card>
+               </View>
+            </View>
+
+            <View style={styles.secondTwoCardsStyle}>
+              <View style={styles.cardSize}>
+                  <Card>
+                    <CardItem bordered>
+                      <Left>
+                        <Button style={{backgroundColor:'#425EB2',width: 60,height: 60,borderRadius: 60/2,}} >
+                        <Icon style={styles.iconFont} type="MaterialIcons" name="device-hub" />
+                        </Button>
+                   
+                        <Body>
+                          <H2 style={styles.cardNumber}>125</H2>
+                          <Text style={styles.buttonText} note>Supply Channels</Text>
+                        </Body>
+                      </Left>
+                    </CardItem>
+                  </Card>
+               </View> 
+               <View style={styles.cardSize}>
+                    <Card>
+                        <CardItem bordered>
+                        <Left>
+                            <Button style={{backgroundColor:'#B3AF27',width: 60,height: 60,borderRadius: 60/2,}} >
+                              <Icon style={styles.iconFont}  type="FontAwesome" name="users" />
+                            </Button>
+                            <Body>
+                              <H2  style={styles.cardNumber}>30</H2>
+                              <Text style={styles.buttonText}  note>Total Customers</Text>
+                            </Body>
+                          </Left>
+                        </CardItem>
+                    </Card>
+               </View> 
+            </View>
+
+            <View style={styles.thirdCardStyle}>
+
+            <DeckSwiper
+                  dataSource={cards}
+                  renderItem={item =>
+                    <Card>
+                <CardItem bordered>
+                  <Text>YTD Sales by Sales Channel</Text>
+                </CardItem>
+                <CardItem bordered >
+                  <View style={{flex:1,flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
+                      
+                      <Icon small type="AntDesign" style={styles.icon} name="left"  />
+                      
+                        <AnimatedCircularProgress
+                            size={150}
+                            width={5}
+                            fill={65}
+                            backgroundWidth={2}
+                            backgroundColor="#E1EFD8"
+                            tintColor="#6DB33F"
+                            duration={2000}
+                            onAnimationComplete={() => console.log('onAnimationComplete')}
+                            rotation={120}
+                      >
+                            {
+                              (fill) => (
+                                <View>
+                                    <H1 style={{fontWeight:'bold'}}>
+                                      {item.text} 
+                                    </H1>
+                                    <Text style={{textAlign:'center',color:'#707070'}}>
+                                      {item.name}
+                                    </Text>
+                                </View>
+                                
+                              )
+                            }
+                      </AnimatedCircularProgress>  
+                   
+                    <Icon type="AntDesign" style={styles.icon} name="right"  />
+                  </View>
+                </CardItem>
+              </Card>
+                  }
+                />
+
+            </View>
+
+            <View style={styles.bottomStatsStyle}>
+
+                    <View style={{width:'23%',height:85,backgroundColor:'#6DB33F',borderRadius:4,padding:4,alignItems:'center'}}>
+                        <Text style={styles.bottomStatsTextStyle}>
+                            Total Products
+                        </Text>
+                        <Button style={{backgroundColor:'#4E9827',width: 50,height: 50,borderRadius: 50/2,marginTop:5}} >
+                            <Text style={styles.bottomStatsInnerTextStyle}>74</Text>
+                        </Button>
+                    </View>
+                    <View style={{width:'23%',height:85,backgroundColor:'#B35644',borderRadius:4,padding:4,alignItems:'center'}}>
+                        <Text style={styles.bottomStatsTextStyle}>
+                             Users
+                        </Text>
+                        <Button style={{backgroundColor:'#973A2B',width: 50,height: 50,borderRadius: 50/2,marginTop:5}} >
+                            <Text style={styles.bottomStatsInnerTextStyle}>87</Text>
+                        </Button>
+                    </View>
+                    <View style={{width:'23%',height:85,backgroundColor:'#425EB2',borderRadius:4,padding:4,alignItems:'center'}}>
+                        <Text style={styles.bottomStatsTextStyle}>
+                            Attachment Files
+                        </Text>
+                        <Button style={{backgroundColor:'#284098',width: 50,height: 50,borderRadius: 50/2,marginTop:5}} >
+                            <Text style={styles.bottomStatsInnerTextStyle}>25</Text>
+                        </Button>
+                    </View>
+                    <View style={{width:'23%',height:85,backgroundColor:'#B3AF27',borderRadius:4,padding:4,alignItems:'center'}}>
+                      <Text style={styles.bottomStatsTextStyle}>
+                            Email Templates
+                      </Text>
+                      <Button style={{backgroundColor:'#989216',width: 50,height: 50,borderRadius: 50/2,marginTop:5}} >
+                            <Text style={styles.bottomStatsInnerTextStyle}>10</Text>
+                        </Button>
+                    </View>
+
+            </View>
+
+           </View>
+      </Container>
+    )
 }
 
-export default Dashboard;
+export default Dashboard

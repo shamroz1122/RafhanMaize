@@ -70,11 +70,12 @@ function Login(props){
                                 <View style={styles.formFlex}>
                                 <KeyboardAvoidingView behavior="padding" enabled >
                                     <Item >
-                                        <Icon active name='person' />
+                                        <Icon android="md-person" ios="ios-person"/>
                                         <Input placeholderTextColor="#6CB33E" placeholder='USERNAME'/>
                                     </Item>
                                     <Item >
-                                        <Icon active name='lock' />
+                                      
+                                        <Icon android="md-lock" ios="ios-lock"/>
                                         <Input secureTextEntry={true} placeholderTextColor="#6CB33E" placeholder='PASSWORD'/>
                                     </Item>
                                     <Button block style={styles.button} onPress={()=>props.navigation.navigate('Home') }>

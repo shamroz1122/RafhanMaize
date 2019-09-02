@@ -5,9 +5,10 @@ import OrderDetails from '../screens/orders/OrderDetails';
 import MyProducts from '../screens/products/MyProducts';
 import Reports from '../screens/reports/Reports';
 import MyCustomers from '../screens/customers/MyCustomers';
-import NewOrders from '../screens/dashboard/NewOrders';
-import MyProfile from '../screens/dashboard/Profile';
-import Corporation from '../screens/dashboard/Corporation';
+import NewOrders from '../screens/home/NewOrders';
+import MyProfile from '../screens/home/Profile';
+import Home from '../screens/home/Home';
+import Corporation from '../screens/customers/Corporation';
 import Login from '../screens/auth/Login';
 import {createSwitchNavigator,createAppContainer,createDrawerNavigator,createBottomTabNavigator,createStackNavigator} from 'react-navigation'
 import Rafhanlogo from '../../assets/RafhanLogocolor.png'
@@ -18,20 +19,20 @@ import { Ionicons, AntDesign,Entypo,FontAwesome,FontAwesome5 } from '@expo/vecto
 
 const uri = "https://facebook.github.io/react-native/docs/assets/favicon.png";
  
-const DashboardStack = createStackNavigator({
-  Dashboard:{screen:Dashboard,
+
+const HomeStack = createStackNavigator({
+  Home:{screen:Home,
     navigationOptions:({ navigation }) => {
 
       return {
-        headerTitle: <Image source={Rafhanlogo} style={{ height: 60,width: 100,marginLeft:85,marginBottom:20}} />,
+        headerTitle: <Image source={Rafhanlogo} style={{ height: 60,width: 100,marginLeft:70,marginBottom:20}} />,
         headerLeft:(
-          <Ionicons style={{paddingLeft:15,paddingBottom:20}} onPress={() => navigation.openDrawer()} name="md-menu" size={30} />
+         <Icon style={{paddingLeft:15,paddingBottom:20}} onPress={() => navigation.openDrawer()} ios="ios-menu" android="md-menu" size={30} />
         ),
         headerRight:(
            <Thumbnail small source={{uri:uri}} style={{marginRight:15,marginBottom:20}} />
         ),
         headerStyle:{height:30},
-
       }
 
     }
@@ -46,15 +47,15 @@ const DashboardStack = createStackNavigator({
       }
     }
   },
-  Corporation:{screen:Corporation,
-    navigationOptions:({ navigation }) => {
-      return {
-        headerTitle: <Text style={{color:"#ffffff",paddingBottom:25,fontSize:22}}>Malik Corporation</Text>,
-        headerStyle:{height:30,backgroundColor:'#6DB33F',color:"#ffffff"},
-        headerBackTitle: null,
-        headerBackImage:  <Icon type="AntDesign" style={{fontSize:20,color:'#ffffff',marginBottom:20}} small name="left"  />
-      }
-    }},
+  // Corporation:{screen:Corporation,
+  //   navigationOptions:({ navigation }) => {
+  //     return {
+  //       headerTitle: <Text style={{color:"#ffffff",paddingBottom:25,fontSize:22}}>Malik Corporation</Text>,
+  //       headerStyle:{height:30,backgroundColor:'#6DB33F',color:"#ffffff"},
+  //       headerBackTitle: null,
+  //       headerBackImage:  <Icon type="AntDesign" style={{fontSize:20,color:'#ffffff',marginBottom:20}} small name="left"  />
+  //     }
+  //   }},
   MyProfile:{screen:MyProfile,
     navigationOptions:({ navigation }) => {
       return {
@@ -64,6 +65,21 @@ const DashboardStack = createStackNavigator({
         headerBackImage:  <Icon type="AntDesign" style={{fontSize:20,color:'#ffffff',marginBottom:20}} small name="left"  />
       }
     }}
+})
+
+const DashboardStack = createStackNavigator({
+  Dashboard:{screen:Dashboard,
+    navigationOptions:({ navigation }) => {
+
+      return {
+        headerTitle: <Text style={{color:"#ffffff",paddingBottom:25,paddingLeft:30,fontSize:22}}>Dashbaord</Text>,
+        headerStyle:{height:30,backgroundColor:'#6DB33F',color:"#ffffff"},
+        headerLeft:(
+          <Ionicons style={{paddingLeft:15,paddingBottom:20,color:'#ffffff'}} onPress={() => navigation.openDrawer()} name="md-menu" size={30} />
+        ),
+      }
+    }
+  }
 })
 
 const MyOrdersStack = createStackNavigator({
@@ -118,43 +134,77 @@ const ReportsStack = createStackNavigator({
     }}
 })
 
-
+const IconStyle = function(myColor) {
+  return {
+    borderRadius: 10,
+    background: myColor,
+  }
+}
 
 const getTabBarIcon = (navigation, focused, tintColor) => {
   const { routeName } = navigation.state;
   let iconName;
   let IconComponent;
   
-  if ( routeName === 'Dashboard') {
 
-     IconComponent = AntDesign
-     iconName = 'piechart'
+  if ( routeName === 'Home') {
+
+    IconComponent = Ionicons
+    IconType = "Ionicons"
+    androidIconName = 'md-home'
+    iosIconName = "ios-home"
+  } 
+  else if ( routeName === 'Dashboard') {
+
+    // IconComponent = AntDesign
+    // iconName = 'piechart'
+     IconComponent = Ionicons
+     IconType = "Ionicons"
+     androidIconName = 'md-pie'
+     iosIconName = "ios-pie"
   } 
   else if (routeName === 'MyOrders') {
 
-    IconComponent = Entypo
-    iconName = 'shopping-cart'     
+    // IconComponent = Entypo
+    // iconName = 'shopping-cart'   
+    IconComponent = Ionicons
+    IconType = "Ionicons"
+    androidIconName = 'md-cart'
+    iosIconName = "ios-cart"  
   } 
   else if (routeName === 'MyProducts') {
 
-    IconComponent = FontAwesome
-    iconName = 'cubes'     
+    // IconComponent = FontAwesome
+    // iconName = 'cubes'     
+    IconComponent = Ionicons
+    IconType = "Ionicons"
+    androidIconName = 'md-cube'
+    iosIconName = "ios-cube"  
   } 
   else if (routeName === 'MyCustomers') {
-
-    IconComponent = FontAwesome
-    iconName = 'user'     
+    IconComponent = Ionicons
+    IconType = "Ionicons"
+    androidIconName = 'md-person'
+    iosIconName = "ios-person"  
+    // IconComponent = FontAwesome
+    // iconName = 'user'     
   } 
   else if (routeName === 'Reports') {
 
+    // IconComponent = FontAwesome5
+    // iconName = 'chart-bar'     
     IconComponent = FontAwesome5
-    iconName = 'chart-bar'     
+    IconType = "FontAwesome5"
+    androidIconName = 'chart-bar'
+    iosIconName = "chart-bar" 
   } 
-  return <IconComponent name={iconName} size={20} color={tintColor} />
+  return <Icon style={{fontSize:20,color:tintColor}} type={IconType}  ios={iosIconName} android={androidIconName} />
 };
 
 
 const DashboardTabNavigator = createBottomTabNavigator({
+
+    Home:{screen:HomeStack},
     Dashboard:{screen:DashboardStack},
     MyOrders:{screen:MyOrdersStack,
       navigationOptions:({navigation})=>{
@@ -192,7 +242,11 @@ const DashboardTabNavigator = createBottomTabNavigator({
       showIcon: true,
       style:{
         fontSize:15
-      }
+      },
+      labelStyle: {
+        fontSize: 8,
+    
+      },
     },
    
   }
