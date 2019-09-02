@@ -48,7 +48,7 @@ const Reports = () => {
           justifyContent:'space-between',
           paddingLeft:15,
           paddingRight:15,
-          paddingTop:20
+          paddingTop:30
         },
         bottomStatsTextStyle:{
           color:'#ffffff',

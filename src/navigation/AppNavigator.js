@@ -9,18 +9,15 @@ import NewOrders from '../screens/dashboard/NewOrders';
 import MyProfile from '../screens/dashboard/Profile';
 import Corporation from '../screens/dashboard/Corporation';
 import Login from '../screens/auth/Login';
-import { Ionicons } from '@expo/vector-icons'
 import {createSwitchNavigator,createAppContainer,createDrawerNavigator,createBottomTabNavigator,createStackNavigator} from 'react-navigation'
 import Rafhanlogo from '../../assets/RafhanLogocolor.png'
 import {Image,Text} from 'react-native'
 import {Thumbnail,Icon} from 'native-base'
-
+import { Ionicons, AntDesign,Entypo,FontAwesome,FontAwesome5 } from '@expo/vector-icons';
 
 
 const uri = "https://facebook.github.io/react-native/docs/assets/favicon.png";
-
-
-
+ 
 const DashboardStack = createStackNavigator({
   Dashboard:{screen:Dashboard,
     navigationOptions:({ navigation }) => {
@@ -45,7 +42,7 @@ const DashboardStack = createStackNavigator({
         headerTitle: <Text style={{color:"#ffffff",paddingBottom:25,fontSize:22}}>Add Order</Text>,
         headerStyle:{height:30,backgroundColor:'#6DB33F',color:"#ffffff"},
         headerBackTitle: null,
-        headerBackImage:  <Icon type="AntDesign" style={{fontSize:15,color:'#ffffff',paddingBottom:20}} small name="left"  />
+        headerBackImage:  <Icon type="AntDesign" style={{fontSize:20,color:'#ffffff',marginBottom:20}} small name="left"  />
       }
     }
   },
@@ -55,7 +52,7 @@ const DashboardStack = createStackNavigator({
         headerTitle: <Text style={{color:"#ffffff",paddingBottom:25,fontSize:22}}>Malik Corporation</Text>,
         headerStyle:{height:30,backgroundColor:'#6DB33F',color:"#ffffff"},
         headerBackTitle: null,
-        headerBackImage:  <Icon type="AntDesign" style={{fontSize:15,color:'#ffffff',paddingBottom:20}} small name="left"  />
+        headerBackImage:  <Icon type="AntDesign" style={{fontSize:20,color:'#ffffff',marginBottom:20}} small name="left"  />
       }
     }},
   MyProfile:{screen:MyProfile,
@@ -64,7 +61,7 @@ const DashboardStack = createStackNavigator({
         headerTitle: <Text style={{color:"#ffffff",paddingBottom:25,fontSize:22}}>My Profile</Text>,
         headerStyle:{height:30,backgroundColor:'#6DB33F',color:"#ffffff"},
         headerBackTitle: null,
-        headerBackImage:  <Icon type="AntDesign" style={{fontSize:15,color:'#ffffff',paddingBottom:20}} small name="left"  />
+        headerBackImage:  <Icon type="AntDesign" style={{fontSize:20,color:'#ffffff',marginBottom:20}} small name="left"  />
       }
     }}
 })
@@ -83,10 +80,9 @@ const MyOrdersStack = createStackNavigator({
         headerTitle: <Text style={{color:"#ffffff",paddingBottom:25,fontSize:22}}>Order #: PK0000517</Text>,
         headerStyle:{height:30,backgroundColor:'#6DB33F',color:"#ffffff"},
         headerBackTitle: null,
-        headerBackImage:  <Icon type="AntDesign" style={{fontSize:15,color:'#ffffff',paddingBottom:20}} small name="left"  />
+        headerBackImage:  <Icon type="AntDesign" style={{fontSize:20,color:'#ffffff',marginBottom:20}} small name="left"  />
       }
     }}
-
 })
 
 const MyProductsStack = createStackNavigator({
@@ -122,33 +118,83 @@ const ReportsStack = createStackNavigator({
     }}
 })
 
+
+
+const getTabBarIcon = (navigation, focused, tintColor) => {
+  const { routeName } = navigation.state;
+  let iconName;
+  let IconComponent;
+  
+  if ( routeName === 'Dashboard') {
+
+     IconComponent = AntDesign
+     iconName = 'piechart'
+  } 
+  else if (routeName === 'MyOrders') {
+
+    IconComponent = Entypo
+    iconName = 'shopping-cart'     
+  } 
+  else if (routeName === 'MyProducts') {
+
+    IconComponent = FontAwesome
+    iconName = 'cubes'     
+  } 
+  else if (routeName === 'MyCustomers') {
+
+    IconComponent = FontAwesome
+    iconName = 'user'     
+  } 
+  else if (routeName === 'Reports') {
+
+    IconComponent = FontAwesome5
+    iconName = 'chart-bar'     
+  } 
+  return <IconComponent name={iconName} size={20} color={tintColor} />
+};
+
+
 const DashboardTabNavigator = createBottomTabNavigator({
     Dashboard:{screen:DashboardStack},
-    MyOrders:{screen:MyOrdersStack},
-    MyProducts:{screen:MyProductsStack},
-    MyCustomers:{screen:MyCustomersStack},
+    MyOrders:{screen:MyOrdersStack,
+      navigationOptions:({navigation})=>{
+        return {
+          tabBarLabel:'My Orders'
+        }
+      }
+    },
+    MyProducts:{screen:MyProductsStack,
+      navigationOptions:({navigation})=>{
+        return {
+          tabBarLabel:'My Products'
+        }
+      }
+    },
+    MyCustomers:{screen:MyCustomersStack,
+      navigationOptions:({navigation})=>{
+        return {
+          tabBarLabel:'My Customers'
+        }
+      }
+    },
     Reports:{screen:ReportsStack}  
   },
   {
-    navigationOptions:({ navigation }) => {
-      const {routeName} = navigation.state.routes
-      [navigation.state.index];
-
-      // if(routeName=='Dashboard')
-      // {
-      //   return {
-      //     headerTitle: <Image source={Rafhanlogo} style={{ height: 60,width: 100,marginLeft:85,marginBottom:20}} />,
-      //     headerStyle:{height:30}
-      //   }
-      // }else{
-        return {
-          header:null,
-          headerTitle: routeName
-        };
-
-    //  }
-    
-    }
+    defaultNavigationOptions: ({ navigation }) => ({
+      tabBarIcon: ({ focused, tintColor }) =>
+        getTabBarIcon(navigation, focused, tintColor),
+    }),
+    tabBarOptions: {
+      activeTintColor: '#3C4142',
+      inactiveTintColor: '#ffffff',
+      activeBackgroundColor:'#DBDBDD',
+      inactiveBackgroundColor:'#3D4142',
+      showIcon: true,
+      style:{
+        fontSize:15
+      }
+    },
+   
   }
   )
 
@@ -162,7 +208,8 @@ const DashboardTabNavigator = createBottomTabNavigator({
         ),
         headerRight:(
            <Thumbnail small source={{uri:uri}} style={{marginRight:15,marginBottom:20}} />
-        )
+        ),
+        header:null
       }
     }
   })

@@ -1,5 +1,5 @@
 import React,{useEffect} from 'react'
-import {View, StyleSheet,StatusBar,Image } from 'react-native';
+import {View, StyleSheet,StatusBar,Image,TouchableOpacity } from 'react-native';
 import { Container, Header, Content, Footer, FooterTab, Button,Card, CardItem, Text,Left,Icon,Right,Body,Thumbnail } from 'native-base'
 import Rafhanlogo from '../../../assets/RafhanLogocolor.png'
 
@@ -53,8 +53,13 @@ function Dashboard(props){
             </Right>
           </Header> */}
           <Content padder>
-          <Card>
-          <CardItem style={{height:100,backgroundColor:'#508630',borderRadius:0}}>
+          <Card> 
+       
+
+      
+
+             <TouchableOpacity activeOpacity={1} onPress={()=>props.navigation.navigate('NewOrders') }>
+                   <CardItem   style={{height:95,backgroundColor:'#508630',borderRadius:0}}>
                 <View style={styles.cardItemStyle}> 
                       <Text style={styles.cardTextStyle}>
                         NEW ORDERS
@@ -66,44 +71,10 @@ function Dashboard(props){
                       </Right>
                 </View>
             </CardItem>
-            <CardItem  style={{height:100,backgroundColor:'#415927',borderRadius:0}}>
-            <View style={styles.cardItemStyle}>
-                  <Text style={styles.cardTextStyle}>
-                    CORPORATION
-                  </Text>
-                  <Right>
-                    <Button small transparent  onPress={()=>props.navigation.navigate('Corporation') }>
-                      <Icon type="AntDesign" style={styles.icon} name="right"  />
-                    </Button>
-                  </Right>
-             
-                </View>
-            </CardItem>
-            <CardItem  style={{height:100,backgroundColor:'#B85D26',borderRadius:0}}>
-            <View style={styles.cardItemStyle}>
-                  <Text style={styles.cardTextStyle}>
-                      MY PROFILE
-                  </Text>
-                  <Right>
-                  <Button small transparent  onPress={()=>props.navigation.navigate('MyProfile') }>
-                    <Icon type="AntDesign" style={styles.icon} name="right"  />
-                  </Button>
-                  </Right>
-                </View>
-            </CardItem>
-            {/* <CardItem style={{height:100,backgroundColor:'#508630',borderRadius:0}}>
-                <View style={styles.cardItemStyle}> 
-                      <Text style={styles.cardTextStyle}>
-                        NEW ORDERS
-                      </Text>
-                      <Right>
-                      <Button small transparent >
-                        <Icon type="AntDesign" style={styles.icon} name="right"  />
-                      </Button>
-                      </Right>
-                </View>
-            </CardItem>
-            <CardItem  style={{height:100,backgroundColor:'#415927',borderRadius:0}}>
+            </TouchableOpacity>
+
+            <TouchableOpacity activeOpacity={1} onPress={()=>props.navigation.navigate('MyOrders') }>
+            <CardItem  style={{height:95,backgroundColor:'#415927',borderRadius:0}}>
             <View style={styles.cardItemStyle}>
                   <Text style={styles.cardTextStyle}>
                     MY ORDERS
@@ -116,7 +87,11 @@ function Dashboard(props){
              
                 </View>
             </CardItem>
-            <CardItem  style={{height:100,backgroundColor:'#B85D26',borderRadius:0}}>
+            </TouchableOpacity>
+
+
+            <TouchableOpacity activeOpacity={1} onPress={()=>props.navigation.navigate('MyProducts') }>
+            <CardItem  style={{height:95,backgroundColor:'#B85D26',borderRadius:0}}>
             <View style={styles.cardItemStyle}>
                   <Text style={styles.cardTextStyle}>
                       MY PRODUCTS
@@ -128,7 +103,10 @@ function Dashboard(props){
                   </Right>
                 </View>
             </CardItem>
-            <CardItem  style={{height:100,backgroundColor:'#968223',borderRadius:0}}>
+            </TouchableOpacity>
+
+            <TouchableOpacity activeOpacity={1} onPress={()=>props.navigation.navigate('MyCustomers') }>
+            <CardItem  style={{height:95,backgroundColor:'#968223',borderRadius:0}}>
             <View style={styles.cardItemStyle}>
                 <Text style={styles.cardTextStyle}>
                     MY CUSTOMERS
@@ -140,18 +118,21 @@ function Dashboard(props){
                 </Right>
                 </View>
             </CardItem>
-            <CardItem  style={{height:100,backgroundColor:'#7C212A',borderRadius:0}}>
+            </TouchableOpacity>
+          <TouchableOpacity activeOpacity={1} onPress={()=>props.navigation.navigate('MyProfile') }>
+            <CardItem   style={{height:95,backgroundColor:'#7C212A',borderRadius:0}}>
             <View style={styles.cardItemStyle}>
-                <Text style={styles.cardTextStyle}>
-                   MY PROFILE
-                </Text>
-                <Right>
-                <Button small transparent >
-                  <Icon type="AntDesign" style={styles.icon} name="right"  />
-                </Button>
-                </Right>
+                  <Text style={styles.cardTextStyle}>
+                      MY PROFILE
+                  </Text>
+                  <Right>
+                  <Button small transparent  onPress={()=>props.navigation.navigate('MyProfile') }>
+                    <Icon type="AntDesign" style={styles.icon} name="right"  />
+                  </Button>
+                  </Right>
                 </View>
-            </CardItem> */}
+            </CardItem>
+            </TouchableOpacity>
 
           </Card>
         </Content>
