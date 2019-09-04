@@ -1,5 +1,5 @@
 import React, {useEffect} from 'react'
-import { StyleSheet,ImageBackground, Text, View,Image,KeyboardAvoidingView,StatusBar } from 'react-native';
+import { StyleSheet,ImageBackground, Text, View,Image,KeyboardAvoidingView,StatusBar,Platform } from 'react-native';
 import { Icon,Input,Item,Button } from 'native-base';
 import logo from '../../../assets/logo.png'
 import Rafhanlogo from '../../../assets/RafhanLogocolor.png'
@@ -8,9 +8,12 @@ import loginBg from '../../../assets/login_bg.png'
 function Login(props){
 
     useEffect( ()=>{
-        StatusBar.setBarStyle( 'light-content',true)
-        StatusBar.setBackgroundColor("#333333")
-      },[])
+        if(Platform.OS==='android')
+        {
+          StatusBar.setBarStyle('light-content',true)
+          StatusBar.setBackgroundColor("#333333")
+        }
+      },[]) 
 
     const styles = StyleSheet.create({
         container:{

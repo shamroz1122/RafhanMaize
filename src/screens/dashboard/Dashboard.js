@@ -1,5 +1,5 @@
 import React, {useEffect} from 'react'
-import { View, Text,StyleSheet,StatusBar,Image,ScrollView } from 'react-native'
+import { View, Text,StyleSheet,StatusBar,Image,ScrollView,Platform } from 'react-native'
 import { Container,H1,DeckSwiper,H2,Thumbnail,Title,Grid,Col,Badge, Header, Content, Card, CardItem, Button, Icon, Left, Body, Right } from 'native-base';
 import { AnimatedCircularProgress } from 'react-native-circular-progress';
 
@@ -7,8 +7,11 @@ import { AnimatedCircularProgress } from 'react-native-circular-progress';
 const Dashboard = () => {
 
     useEffect( ()=>{
+      if(Platform.OS==='android')
+      {
         StatusBar.setBarStyle( 'light-content',true)
-        StatusBar.setBackgroundColor("#60993A")
+        StatusBar.setBackgroundColor("#333333")
+      }
       },[]) 
   
       const styles = StyleSheet.create({

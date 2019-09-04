@@ -12,20 +12,25 @@ import Corporation from '../screens/customers/Corporation';
 import Login from '../screens/auth/Login';
 import {createSwitchNavigator,createAppContainer,createDrawerNavigator,createBottomTabNavigator,createStackNavigator} from 'react-navigation'
 import Rafhanlogo from '../../assets/RafhanLogocolor.png'
-import {Image,Text} from 'react-native'
+import {Image,Text,Platform} from 'react-native'
 import {Thumbnail,Icon} from 'native-base'
 import { Ionicons, AntDesign,Entypo,FontAwesome,FontAwesome5 } from '@expo/vector-icons';
 
-
 const uri = "https://facebook.github.io/react-native/docs/assets/favicon.png";
- 
-
 const HomeStack = createStackNavigator({
   Home:{screen:Home,
     navigationOptions:({ navigation }) => {
 
+      var marginLeft = 0
+      if(Platform.OS==='android')
+      {
+        marginLeft = 70
+      }else{
+        marginLeft = 40
+      }
+
       return {
-        headerTitle: <Image source={Rafhanlogo} style={{ height: 60,width: 100,marginLeft:70,marginBottom:20}} />,
+        headerTitle: <Image source={Rafhanlogo} style={{ height: 60,width: 100,marginLeft:Platform.OS === 'android' ? 70 : 0,marginBottom:20}} />,
         headerLeft:(
          <Icon style={{paddingLeft:15,paddingBottom:20}} onPress={() => navigation.openDrawer()} ios="ios-menu" android="md-menu" size={30} />
         ),
@@ -34,7 +39,6 @@ const HomeStack = createStackNavigator({
         ),
         headerStyle:{height:30},
       }
-
     }
   },
   NewOrders:{screen:NewOrders,
@@ -42,8 +46,8 @@ const HomeStack = createStackNavigator({
       return {
         headerTitle: <Text style={{color:"#ffffff",paddingBottom:25,fontSize:22}}>Add Order</Text>,
         headerStyle:{height:30,backgroundColor:'#6DB33F',color:"#ffffff"},
-        headerBackTitle: null,
-        headerBackImage:  <Icon type="AntDesign" style={{fontSize:20,color:'#ffffff',marginBottom:20}} small name="left"  />
+        headerBackImage: Platform.OS === 'android'? <Icon type="AntDesign" style={{fontSize:20,color:'#ffffff',marginBottom:20}} small name="left"  /> :null,
+        headerTintColor: '#ffffff',
       }
     }
   },
@@ -61,8 +65,8 @@ const HomeStack = createStackNavigator({
       return {
         headerTitle: <Text style={{color:"#ffffff",paddingBottom:25,fontSize:22}}>My Profile</Text>,
         headerStyle:{height:30,backgroundColor:'#6DB33F',color:"#ffffff"},
-        headerBackTitle: null,
-        headerBackImage:  <Icon type="AntDesign" style={{fontSize:20,color:'#ffffff',marginBottom:20}} small name="left"  />
+        headerBackImage: Platform.OS === 'android'? <Icon type="AntDesign" style={{fontSize:20,color:'#ffffff',marginBottom:20}} small name="left"  /> :null,
+        headerTintColor: '#ffffff',
       }
     }}
 })
@@ -88,6 +92,7 @@ const MyOrdersStack = createStackNavigator({
       return {
         headerTitle: <Text style={{color:"#ffffff",paddingBottom:25,paddingLeft:30,fontSize:22}}>Orders</Text>,
         headerStyle:{height:30,backgroundColor:'#6DB33F',color:"#ffffff"},
+        header:null
       }
     }},
   OrderDetails:{screen:OrderDetails,
@@ -95,8 +100,8 @@ const MyOrdersStack = createStackNavigator({
       return {
         headerTitle: <Text style={{color:"#ffffff",paddingBottom:25,fontSize:22}}>Order #: PK0000517</Text>,
         headerStyle:{height:30,backgroundColor:'#6DB33F',color:"#ffffff"},
-        headerBackTitle: null,
-        headerBackImage:  <Icon type="AntDesign" style={{fontSize:20,color:'#ffffff',marginBottom:20}} small name="left"  />
+        headerBackImage: Platform.OS === 'android'? <Icon type="AntDesign" style={{fontSize:20,color:'#ffffff',marginBottom:20}} small name="left"  /> :null,
+        headerTintColor: '#ffffff',
       }
     }}
 })
@@ -204,7 +209,15 @@ const getTabBarIcon = (navigation, focused, tintColor) => {
 
 const DashboardTabNavigator = createBottomTabNavigator({
 
-    Home:{screen:HomeStack},
+    Home:{screen:HomeStack,
+      navigationOptions:({navigation})=>{
+        return {
+          headerBackTitle: null,
+          headerBackTitleStyle:{color:'#ffffff'}
+        }
+      }
+    
+    },
     Dashboard:{screen:DashboardStack},
     MyOrders:{screen:MyOrdersStack,
       navigationOptions:({navigation})=>{

@@ -1,13 +1,17 @@
 import React,{useEffect} from 'react'
-import {View, StyleSheet,StatusBar,Image,TouchableOpacity } from 'react-native';
+import {View, StyleSheet,StatusBar,Image,TouchableOpacity,Platform } from 'react-native';
 import { Container, Header, Content, Footer, FooterTab, Button,Card, CardItem, Text,Left,Icon,Right,Body,Thumbnail } from 'native-base'
 import Rafhanlogo from '../../../assets/RafhanLogocolor.png'
 
 function Home(props){
 
     useEffect( ()=>{
+      if(Platform.OS==='android')
+      {
         StatusBar.setBarStyle( 'light-content',true)
         StatusBar.setBackgroundColor("#333333")
+      }
+      
       },[])
 
       const styles = StyleSheet.create({
