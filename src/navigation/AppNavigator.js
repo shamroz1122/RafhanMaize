@@ -97,8 +97,10 @@ const MyOrdersStack = createStackNavigator({
     }},
   OrderDetails:{screen:OrderDetails,
     navigationOptions:({ navigation }) => {
+      console.log(navigation.getParam('order'))
+        let params =  navigation.getParam('order')
       return {
-        headerTitle: <Text style={{color:"#ffffff",paddingBottom:25,fontSize:22}}>Order #: PK0000517</Text>,
+        headerTitle: <Text style={{color:"#ffffff",paddingBottom:25,fontSize:22}}>Order #: {params.id}</Text>,
         headerStyle:{height:30,backgroundColor:'#6DB33F',color:"#ffffff"},
         headerBackImage: Platform.OS === 'android'? <Icon type="AntDesign" style={{fontSize:20,color:'#ffffff',marginBottom:20}} small name="left"  /> :null,
         headerTintColor: '#ffffff',
@@ -154,56 +156,60 @@ const getTabBarIcon = (navigation, focused, tintColor) => {
 
   if ( routeName === 'Home') {
 
-    IconComponent = Ionicons
-    IconType = "Ionicons"
-    androidIconName = 'md-home'
-    iosIconName = "ios-home"
+    IconComponent = FontAwesome
+    iconName = 'home'
+
+    // IconComponent = Ionicons
+    // IconType = "Ionicons"
+    // androidIconName = 'md-home'
+    // iosIconName = "ios-home"
   } 
   else if ( routeName === 'Dashboard') {
 
-    // IconComponent = AntDesign
-    // iconName = 'piechart'
-     IconComponent = Ionicons
-     IconType = "Ionicons"
-     androidIconName = 'md-pie'
-     iosIconName = "ios-pie"
+    IconComponent = AntDesign
+    iconName = 'piechart'
+    //  IconComponent = Ionicons
+    //  IconType = "Ionicons"
+    //  androidIconName = 'md-pie'
+    //  iosIconName = "ios-pie"
   } 
-  else if (routeName === 'MyOrders') {
+  else if (routeName === 'MyOrders')  {
 
-    // IconComponent = Entypo
-    // iconName = 'shopping-cart'   
-    IconComponent = Ionicons
-    IconType = "Ionicons"
-    androidIconName = 'md-cart'
-    iosIconName = "ios-cart"  
+    IconComponent = Entypo
+    iconName = 'shopping-cart'   
+    // IconComponent = Ionicons
+    // IconType = "Ionicons"
+    // androidIconName = 'md-cart'
+    // iosIconName = "ios-cart"  
   } 
   else if (routeName === 'MyProducts') {
 
-    // IconComponent = FontAwesome
-    // iconName = 'cubes'     
-    IconComponent = Ionicons
-    IconType = "Ionicons"
-    androidIconName = 'md-cube'
-    iosIconName = "ios-cube"  
+    IconComponent = FontAwesome
+    iconName = 'cubes'     
+    // IconComponent = Ionicons
+    // IconType = "Ionicons"
+    // androidIconName = 'md-cube'
+    // iosIconName = "ios-cube"  
   } 
   else if (routeName === 'MyCustomers') {
-    IconComponent = Ionicons
-    IconType = "Ionicons"
-    androidIconName = 'md-person'
-    iosIconName = "ios-person"  
-    // IconComponent = FontAwesome
-    // iconName = 'user'     
+    // IconComponent = Ionicons
+    // IconType = "Ionicons"
+    // androidIconName = 'md-person'
+    // iosIconName = "ios-person"  
+    IconComponent = FontAwesome
+    iconName = 'user'     
   } 
   else if (routeName === 'Reports') {
 
-    // IconComponent = FontAwesome5
-    // iconName = 'chart-bar'     
     IconComponent = FontAwesome5
-    IconType = "FontAwesome5"
-    androidIconName = 'chart-bar'
-    iosIconName = "chart-bar" 
+    iconName = 'chart-bar'     
+    // IconComponent = FontAwesome5
+    // IconType = "FontAwesome5"
+    // androidIconName = 'chart-bar'
+    // iosIconName = "chart-bar" 
   } 
-  return <Icon style={{fontSize:20,color:tintColor}} type={IconType}  ios={iosIconName} android={androidIconName} />
+  // return <Icon style={{fontSize:20,color:tintColor}} type={IconType}  ios={iosIconName} android={androidIconName} />
+    return <IconComponent style={{fontSize:20,color:tintColor}} name={iconName}   />
 };
 
 
@@ -280,9 +286,6 @@ const DashboardTabNavigator = createBottomTabNavigator({
       }
     }
   })
-
-
-
 
   const AppDrawerNavigator = createDrawerNavigator({
     Home:{
