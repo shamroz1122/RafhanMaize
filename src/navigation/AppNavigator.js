@@ -15,6 +15,7 @@ import Rafhanlogo from '../../assets/RafhanLogocolor.png'
 import {Image,Text,Platform} from 'react-native'
 import {Thumbnail,Icon} from 'native-base'
 import { Ionicons, AntDesign,Entypo,FontAwesome,FontAwesome5 } from '@expo/vector-icons';
+import NewOrder from '../screens/home/NewOrders';
 
 const uri = "https://facebook.github.io/react-native/docs/assets/favicon.png";
 const HomeStack = createStackNavigator({
@@ -294,7 +295,7 @@ const DashboardTabNavigator = createBottomTabNavigator({
   })
 
   const AppSwitchNavigator = createSwitchNavigator({
-    Login:{screen:Login},
+    Login:{screen:NewOrder},
     Home:AppDrawerNavigator
   })
 
