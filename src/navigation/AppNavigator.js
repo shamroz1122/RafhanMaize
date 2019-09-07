@@ -263,7 +263,7 @@ const DashboardTabNavigator = createBottomTabNavigator({
       style:{
         fontSize:15
       },
-      labelStyle: {
+      labelStyle: { 
         fontSize: 8,
     
       },

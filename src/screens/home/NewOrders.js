@@ -1,20 +1,33 @@
 import React, {useEffect,useState} from 'react';
 import { StyleSheet, Text, View, StatusBar,Platform,TextInput, TouchableOpacity,KeyboardAvoidingView } from 'react-native';
-import { Container,Content,Picker,Item,Icon,DatePicker } from 'native-base';
+import { Container,Content,Picker,Item,Icon,DatePicker, Card, CardItem, Body,Right,H3,Left } from 'native-base';
+import uuid from 'uuid/v1';
 
 
 function NewOrder(){
 
     const [state,setState] = useState({
-          orderNumberLabel:'',
-          securityDepositer:'',
           orderNumber:'',
-          orderDateLabel:'',
-          orderDate:'',
-          deliveryDate:'',
+          orderNumberLabel:'',
+
+          securityDepositer:'',
+         
           poNumber:'',
+
           note:'',
+
           customer:'',
+
+          orderDate:'',
+          orderDateLabel:'',
+        
+          deliveryDate:'',
+         
+          orderDetails:[
+             {productName:'', uom:'BG',quantity:'',deliveryDate:'',key:uuid()}
+          ]
+
+         
     })
 
       useEffect( ()=>{
@@ -32,24 +45,24 @@ function NewOrder(){
           orderNumber:'PK0000517',
           securityDepositer: 'Security Depositer',
           orderDateLabel: 'Order Date '+currentDate,
-          orderDate: currentDate,
-
+          orderDate: currentDate
+          
         }))
        
       
       },[])
 
 
-      const setDate = (newDate) => {
+      const onSetDeliveryDate = (newDate) => {
 
       let deliveryDate = newDate.getFullYear()+'-'+(newDate.getMonth()+1)+'-'+newDate.getDate();
         
       setState((state)=>({
             ...state,
-            deliveryDate: deliveryDate
-        
+            deliveryDate: deliveryDate,
+            orderDetails: state.orderDetails.map(el => ( {...el, deliveryDate:deliveryDate}))
           }))
-          
+
       }
 
       const onChangePoNumber = (text) =>{
@@ -60,8 +73,7 @@ function NewOrder(){
      
         })
         )
-        console.log(state)
-
+     
       }
       const onChangeNote = (text) => {
         setState((state)=>({
@@ -70,16 +82,38 @@ function NewOrder(){
      
         })
         )
-        console.log(state)
       }
 
-      const onValueChange2 = (value) => {
+      const onCustomerPicker = (value) => {
         setState((state)=>({
           ...state,
           customer: value
         })
         )
       }
+      const onChangeOrderDetail1 = (text,key) => {
+
+       
+          setState((state)=>({
+            ...state,
+            orderDetails: state.orderDetails.map(el => (el.key === key ? {...el, productName:text} : el))
+          })
+          )
+        
+          console.log(state.orderDetails)
+      }
+
+      const onChangeOrderDetail2 = (text,key) => {
+
+       
+        setState((state)=>({
+          ...state,
+          orderDetails: state.orderDetails.map(el => (el.key === key ? {...el, quantity:text} : el))
+        })
+        )
+      
+        console.log(state.orderDetails)
+    }
 
     const keyboardVerticalOffset = Platform.OS === 'ios' ? 40 : 0
 
@@ -114,6 +148,13 @@ function NewOrder(){
         color:'#777777'
        },
 
+       orderDetailCard : {
+      
+        borderWidth: 1,
+        borderRadius:5,
+        marginTop:20,
+       },
+
        inputDateDisable : {
         height: 40, 
         borderColor: '#828282',
@@ -124,15 +165,69 @@ function NewOrder(){
         borderRadius:5,
         marginTop:20
        },
+     
        inputDate : {
         height: 40, 
         borderColor: '#828282',
         borderWidth: 1,
         width: '48%',
         backgroundColor:'#ffffff',
-       
         borderRadius:5,
         marginTop:20
+       },
+       inputUOMDisable:{
+        height: 40, 
+        borderColor: '#828282',
+        borderWidth: 1,
+        width: '48%',
+        backgroundColor:'#EEEEEE',
+        padding:5,
+        borderRadius:5,
+        marginTop:20
+       },
+       deliveryDateDisable:{
+        height: 40, 
+        borderColor: '#828282',
+        borderWidth: 1,
+        width: '100%',
+        backgroundColor:'#EEEEEE',
+        padding:5,
+        borderRadius:5,
+        marginTop:20
+       },
+       
+       inputQuantity:{
+        height: 40, 
+        borderColor: '#828282',
+        borderWidth: 1,
+        width: '48%',
+        padding:5,
+        backgroundColor:'#ffffff',
+        borderRadius:5,
+        marginTop:20
+       },
+       customerPicker:{
+        height: 40, 
+        borderColor: '#828282',
+        borderWidth: 1,
+        backgroundColor:'#ffffff',
+        borderRadius:5,
+        marginTop:20,
+        alignItems:'center',
+        justifyContent:'center'
+       },
+       productPicker: {
+        flex:1,
+        flexDirection:'row',
+        height: 40, 
+        borderColor: '#828282',
+        borderWidth: 1,
+        width: '100%',
+        backgroundColor:'#ffffff',
+        borderRadius:5,
+        alignItems:'center',
+        justifyContent:'center'
+     
        },
        disabledInput : {
         height: 40, 
@@ -169,6 +264,77 @@ function NewOrder(){
 
     });
 
+
+    const orderDetails =   state.orderDetails.map(orderDetail => {
+      return (
+             <Card style={styles.orderDetailCard} key={orderDetail.key}>
+                  <CardItem bordered>
+                    <Left>
+                      <H3 style={{color:'#777777'}}>Order Detail</H3>
+                    </Left>
+                    <Right>
+                      <Icon style={{color:'#6EB341'}} type="AntDesign" name="pluscircleo" ></Icon>
+                    </Right>
+                  </CardItem>
+                  <CardItem bordered>
+                    <View style={{flex:1}}>
+                        <View style={styles.productPicker}>
+                         <Item picker style={{border:'none'}}>
+                            <Picker
+                              mode="dropdown"
+                              iosIcon={<Icon name="arrow-down" />}
+                              placeholder="Product Name"
+                              placeholderStyle={{ color: "#777777" }}
+                              placeholderIconColor="#777777" 
+                              selectedValue={orderDetail.productName}
+                              onValueChange={(text)=>onChangeOrderDetail1(text,orderDetail.key)}
+                            >
+                              <Picker.Item label="Product Name" value="key0" />
+                              <Picker.Item label="product 1" value="key1" />
+                              <Picker.Item label="product 2" value="key2" />
+                              <Picker.Item label="product 3" value="key3" />
+                            
+                            </Picker>
+                          </Item>
+                          </View>
+                          <View style={{flex:1,flexDirection:'row',justifyContent:'space-between'}}> 
+                               <TextInput
+                                    style={styles.inputUOMDisable}
+                                    placeholder=""
+                                    value={"UOM: "+orderDetail.uom}
+                                    placeholderTextColor = "#777777"
+                                    editable={false}
+                                    
+                                />
+                                <TextInput
+                                    style={styles.inputQuantity}
+                                    placeholder="Quantity"
+                                    placeholderTextColor = "#777777"
+                                    keyboardType='number-pad'
+                                    value={orderDetail.quantity}
+                                    onChangeText={(text)=>onChangeOrderDetail2(text,orderDetail.key)}
+                                />
+                            </View>
+                            <View style={{flex:1,flexDirection:'row',justifyContent:'space-between'}}>  
+                                  <TextInput
+                                      style={styles.deliveryDateDisable}
+                                      placeholder={"Delivery Date: "+orderDetail.deliveryDate}
+                                      placeholderTextColor = "#777777"
+                                      editable={false}
+                                  />
+                              </View>
+                     </View>
+                  </CardItem>
+                </Card>
+            )
+        })
+
+
+
+
+
+
+
     return (
 
           <Container style={styles.formFlex}>
@@ -204,16 +370,16 @@ function NewOrder(){
                                 />
 
                                 
-                                <Item picker style={styles.input}>
+                                <View style={styles.customerPicker}>
+                                 <Item picker >
                                     <Picker
                                       mode="dropdown"
-                                     
                                       iosIcon={<Icon name="arrow-down" />}
                                       placeholder="Customer"
                                       placeholderStyle={{ color: "#777777" }}
                                       placeholderIconColor="#777777" 
                                       selectedValue={state.customer}
-                                      onValueChange={onValueChange2}
+                                      onValueChange={onCustomerPicker}
                                     >
                                       <Picker.Item style={{color:'#777777'}} label="Customer*" value="key0" />
                                       <Picker.Item label="Asim" value="key1" />
@@ -222,45 +388,55 @@ function NewOrder(){
                                      
                                     </Picker>
                                   </Item>
-
+                                </View>
+                          
                                   <View style={{flex:1,flexDirection:'row',justifyContent:'space-between'}}>  
                                         
-                                         <TextInput
-                                              style={styles.inputDateDisable}
-                                              placeholder={state.orderDateLabel}
-                                              placeholderTextColor = "#777777"
-                                              editable={false}
-                                          />
+                                        <TextInput
+                                            style={styles.inputDateDisable}
+                                            placeholder={state.orderDateLabel}
+                                            placeholderTextColor = "#777777"
+                                            editable={false}
+                                        />
                                      
-                                     <View style={styles.inputDate}>
-                                         <DatePicker
-                                            minimumDate={new Date()}
-                                            locale={"da"}
-                                            timeZoneOffsetInMinutes={undefined}
-                                            modalTransparent={true}
-                                            animationType={"fade"}
-                                            androidMode={"default"}
-                                            placeHolderText="Delivery Date"
-                                            textStyle={{ color: "#777777" }}
-                                            placeHolderTextStyle={{ color: "#d3d3d3" }}
-                                            onDateChange={setDate}
-                                            disabled={false}
-                                            animationType="slide"
-                                        
-                                            />
-                                     </View>
-                                       
-
-
+                                      <View style={styles.inputDate}>
+                                          <DatePicker
+                                              minimumDate={new Date()}
+                                              locale={"da"}
+                                              timeZoneOffsetInMinutes={undefined}
+                                              modalTransparent={true}
+                                              animationType={"fade"}
+                                              androidMode={"default"}
+                                              placeHolderText="Delivery Date"
+                                              textStyle={{ color: "#777777" }}
+                                              placeHolderTextStyle={{ color: "#d3d3d3" }}
+                                              onDateChange={onSetDeliveryDate}
+                                              disabled={false}
+                                              animationType="slide"
+                                          
+                                              />
+                                      </View>
+                                      
                                     </View>
                                    
+                                   
+
+                                {orderDetails}
+
 
                                 <TouchableOpacity style={styles.button} >
                                   <Text style={styles.loginText}>SAVE</Text>
                                 </TouchableOpacity>
 
                     </KeyboardAvoidingView>
-                         
+                              
+                   
+
+
+
+
+
+
                </Content>
           </Container>
 
