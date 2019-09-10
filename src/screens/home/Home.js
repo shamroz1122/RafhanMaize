@@ -1,7 +1,7 @@
 import React,{useEffect} from 'react'
-import {View, StyleSheet,StatusBar,Image,TouchableOpacity,Platform } from 'react-native';
-import { Container, Header, Content, Footer, FooterTab, Button,Card, CardItem, Text,Left,Icon,Right,Body,Thumbnail } from 'native-base'
-import Rafhanlogo from '../../../assets/RafhanLogocolor.png'
+import {View, StyleSheet,StatusBar,TouchableOpacity,Platform } from 'react-native';
+import { Container, Content, Button,Card, CardItem, Text,Icon,Right } from 'native-base'
+
 
 function Home(props){
 
@@ -38,30 +38,12 @@ function Home(props){
         }
       })
 
-      const uri = "https://facebook.github.io/react-native/docs/assets/favicon.png";
      return (
         <Container style={{backgroundColor:'#F5F5F5'}}>
-        {/* <Header style={styles.header}>
-            <Left>
-              <Button  transparent>
-                <Icon style={{color:'black'}}  name='menu' />
-              </Button>
-            </Left>
-                <View style={styles.logoStyle}>
-                  <Image  source={Rafhanlogo} style={{ height: 60,width: 100}} />
-                </View>
-            <Right>
-              <Button transparent >
-                <Thumbnail small source={{uri:uri}} />
-              </Button>
-            </Right>
-          </Header> */}
+
           <Content padder>
           <Card> 
-       
-
       
-
              <TouchableOpacity activeOpacity={1} onPress={()=>props.navigation.navigate('NewOrders') }>
                    <CardItem   style={{height:95,backgroundColor:'#508630',borderRadius:0}}>
                 <View style={styles.cardItemStyle}> 

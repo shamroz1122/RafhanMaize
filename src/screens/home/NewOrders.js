@@ -1,8 +1,7 @@
 import React, {useEffect,useState} from 'react';
-import { StyleSheet, Text, View, StatusBar,Platform,TextInput, TouchableOpacity,KeyboardAvoidingView } from 'react-native';
-import { Container,Content,Picker,Item,Icon,DatePicker, Card, CardItem, Body,Right,H3,Left } from 'native-base';
+import { StyleSheet, Text, View, StatusBar,Platform,TextInput, TouchableOpacity } from 'react-native';
+import { Container,Content,Picker,Item,Icon,DatePicker, Card, CardItem,Right,H3,Left } from 'native-base';
 import uuid from 'uuid/v1';
-
 
 function NewOrder(){
 
@@ -100,7 +99,7 @@ function NewOrder(){
           })
           )
         
-          console.log(state.orderDetails)
+        //  console.log(state.orderDetails)
       }
 
       const onChangeOrderDetail2 = (text,key) => {
@@ -112,10 +111,31 @@ function NewOrder(){
         })
         )
       
-        console.log(state.orderDetails)
+        //console.log(state.orderDetails)
     }
 
-    const keyboardVerticalOffset = Platform.OS === 'ios' ? 40 : 0
+    const addNewOrderDetail = () =>{
+
+      setState((state)=>({
+        ...state,
+        orderDetails: [...state.orderDetails, {productName:'', uom:'BG',quantity:'',deliveryDate:state.deliveryDate,key:uuid()}]
+      })
+      )
+
+    }
+    const removeOrderDetail = (key) => {
+
+        var newOrderDetails = state.orderDetails.filter(orderDetail=>{
+          return orderDetail.key !== key; 
+        });
+
+        setState((state)=>({
+          ...state,
+          orderDetails: newOrderDetails
+        })
+      )
+    
+    }
 
     const styles = StyleSheet.create({
      
@@ -183,7 +203,8 @@ function NewOrder(){
         backgroundColor:'#EEEEEE',
         padding:5,
         borderRadius:5,
-        marginTop:20
+        marginTop:20,
+        color:'#777777'
        },
        deliveryDateDisable:{
         height: 40, 
@@ -261,19 +282,22 @@ function NewOrder(){
         fontSize:11
        }
 
-
     });
 
 
-    const orderDetails =   state.orderDetails.map(orderDetail => {
+    const orderDetails =   state.orderDetails.map((orderDetail,index) => {
+    
+        const actionButton = index === 0 ?   <Icon onPress={addNewOrderDetail} style={{color:'#6EB341'}} type="AntDesign" name="pluscircleo" ></Icon>:   <Icon onPress={()=>removeOrderDetail(orderDetail.key)} style={{color:'#B35644'}} type="AntDesign" name="minuscircleo" ></Icon>
       return (
+
+
              <Card style={styles.orderDetailCard} key={orderDetail.key}>
                   <CardItem bordered>
                     <Left>
                       <H3 style={{color:'#777777'}}>Order Detail</H3>
                     </Left>
                     <Right>
-                      <Icon style={{color:'#6EB341'}} type="AntDesign" name="pluscircleo" ></Icon>
+                      {actionButton}
                     </Right>
                   </CardItem>
                   <CardItem bordered>
@@ -282,6 +306,7 @@ function NewOrder(){
                          <Item picker style={{border:'none'}}>
                             <Picker
                               mode="dropdown"
+                              style={{ color:'#777777',fontSize:8}}
                               iosIcon={<Icon name="arrow-down" />}
                               placeholder="Product Name"
                               placeholderStyle={{ color: "#777777" }}
@@ -330,17 +355,11 @@ function NewOrder(){
         })
 
 
-
-
-
-
-
     return (
 
           <Container style={styles.formFlex}>
                 <Content>
-                      <KeyboardAvoidingView behavior='position' keyboardVerticalOffset={keyboardVerticalOffset} >
-                             
+                         
                                <TextInput
                                     style={styles.disabledInput}
                                     placeholder={state.orderNumberLabel}
@@ -375,6 +394,7 @@ function NewOrder(){
                                     <Picker
                                       mode="dropdown"
                                       iosIcon={<Icon name="arrow-down" />}
+                                      style={{ color:'#777777',fontSize:8}}
                                       placeholder="Customer"
                                       placeholderStyle={{ color: "#777777" }}
                                       placeholderIconColor="#777777" 
@@ -418,31 +438,17 @@ function NewOrder(){
                                       </View>
                                       
                                     </View>
-                                   
-                                   
-
+                                  
                                 {orderDetails}
-
 
                                 <TouchableOpacity style={styles.button} >
                                   <Text style={styles.loginText}>SAVE</Text>
                                 </TouchableOpacity>
 
-                    </KeyboardAvoidingView>
-                              
-                   
-
-
-
-
-
-
                </Content>
           </Container>
 
-            // <KeyboardAvoidingView style={{flex:1}} behavior="padding" enabled> */}
-            // </KeyboardAvoidingView>
-              
+                 
     )
 }
 

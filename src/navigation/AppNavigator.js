@@ -22,14 +22,7 @@ const HomeStack = createStackNavigator({
   Home:{screen:Home,
     navigationOptions:({ navigation }) => {
 
-      var marginLeft = 0
-      if(Platform.OS==='android')
-      {
-        marginLeft = 70
-      }else{
-        marginLeft = 40
-      }
-
+  
       return {
         headerTitle: <Image source={Rafhanlogo} style={{ height: 60,width: 100,marginLeft:Platform.OS === 'android' ? 70 : 0,marginBottom:20}} />,
         headerLeft:(
@@ -52,15 +45,7 @@ const HomeStack = createStackNavigator({
       }
     }
   },
-  // Corporation:{screen:Corporation,
-  //   navigationOptions:({ navigation }) => {
-  //     return {
-  //       headerTitle: <Text style={{color:"#ffffff",paddingBottom:25,fontSize:22}}>Malik Corporation</Text>,
-  //       headerStyle:{height:30,backgroundColor:'#6DB33F',color:"#ffffff"},
-  //       headerBackTitle: null,
-  //       headerBackImage:  <Icon type="AntDesign" style={{fontSize:20,color:'#ffffff',marginBottom:20}} small name="left"  />
-  //     }
-  //   }},
+  
   MyProfile:{screen:MyProfile,
     navigationOptions:({ navigation }) => {
       return {
@@ -68,6 +53,7 @@ const HomeStack = createStackNavigator({
         headerStyle:{height:30,backgroundColor:'#6DB33F',color:"#ffffff"},
         headerBackImage: Platform.OS === 'android'? <Icon type="AntDesign" style={{fontSize:20,color:'#ffffff',marginBottom:20}} small name="left"  /> :null,
         headerTintColor: '#ffffff',
+        header:null
       }
     }}
 })
@@ -98,7 +84,7 @@ const MyOrdersStack = createStackNavigator({
     }},
   OrderDetails:{screen:OrderDetails,
     navigationOptions:({ navigation }) => {
-      console.log(navigation.getParam('order'))
+    //  console.log(navigation.getParam('order'))
         let params =  navigation.getParam('order')
       return {
         headerTitle: <Text style={{color:"#ffffff",paddingBottom:25,fontSize:22}}>Order #: {params.id}</Text>,
@@ -115,6 +101,7 @@ const MyProductsStack = createStackNavigator({
       return {
         headerTitle: <Text style={{color:"#ffffff",paddingBottom:25,paddingLeft:30,fontSize:22}}>My Products</Text>,
         headerStyle:{height:30,backgroundColor:'#6DB33F',color:"#ffffff"},
+         header:null
       }
     }}
 })
@@ -125,8 +112,20 @@ const MyCustomersStack = createStackNavigator({
       return {
         headerTitle: <Text style={{color:"#ffffff",paddingBottom:25,paddingLeft:30,fontSize:22}}>My Customers</Text>,
         headerStyle:{height:30,backgroundColor:'#6DB33F',color:"#ffffff"},
+        header:null
       }
-    }}
+    }},
+    Corporation:{screen:Corporation,
+    navigationOptions:({ navigation }) => {
+      let params =  navigation.getParam('customer')
+
+      return {
+        headerTitle: <Text style={{color:"#ffffff",paddingBottom:25,fontSize:22}}>{params.customerName}</Text>,
+        headerStyle:{height:30,backgroundColor:'#6DB33F',color:"#ffffff"},
+        headerBackTitle: null,
+        headerBackImage:  <Icon type="AntDesign" style={{fontSize:20,color:'#ffffff',marginBottom:20}} small name="left"  />
+      }
+    }},
 })
 
 const ReportsStack = createStackNavigator({
@@ -291,11 +290,27 @@ const DashboardTabNavigator = createBottomTabNavigator({
   const AppDrawerNavigator = createDrawerNavigator({
     Home:{
       screen:DashboardStackNavigator
+    },
+    Dashboard:{
+      screen:DashboardStack
+    },
+    MyOrders:{
+     screen:MyOrdersStack
+    },
+    MyProdcuts:{
+     screen:MyProductsStack
+    },
+    MyCustomers:{
+     screen:MyCustomersStack
+    },
+    MyProfile:{
+     screen:MyProfile
     }
+    
   })
 
   const AppSwitchNavigator = createSwitchNavigator({
-    Login:{screen:NewOrder},
+    Login:{screen:Login},
     Home:AppDrawerNavigator
   })
 

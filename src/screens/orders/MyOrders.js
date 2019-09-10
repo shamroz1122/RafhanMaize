@@ -1,6 +1,6 @@
 import React,{useState,useEffect} from 'react'
 import {View,Text,StatusBar,Platform,StyleSheet,TouchableOpacity} from 'react-native'
-import { Container, Header, Left, Body, Right, Button, Icon, Title,Content,H2,Tab,Tabs,Card, CardItem,Item,Input } from 'native-base';
+import { Container, Header, Left, Body, Right, Button, Icon,Content,H2,H3,Tab,Tabs,Card, CardItem,Item,Input } from 'native-base';
 function MyOrders(props) {
 
       const [state,setState] = useState({
@@ -43,7 +43,7 @@ function MyOrders(props) {
             backgroundColor:'#6DB33F',
         },
         card :{
-          elevation: 8
+          elevation: 4
         },
         cardView:{
           padding:15,
@@ -111,7 +111,7 @@ function MyOrders(props) {
                                                       <Icon type="MaterialCommunityIcons" name="shopping" style={{color:'#ffffff'}}/>
                                                     </View>
                                                     <Body>
-                                                      <H2 style={{color:'#6DB33F'}}>{order.orderTitle}</H2>
+                                                      <H3 style={{color:'#6DB33F'}}>{order.orderTitle}</H3>
                                                       <Text style={{fontSize:10,color:'#838383'}}>{order.orderDetail}</Text>
                                                     </Body>
                                                   </Left>
@@ -138,6 +138,7 @@ function MyOrders(props) {
 
     return (
      <Container style={{backgroundColor:"#DFEED7"}}>
+     <StatusBar backgroundColor="#60993A" barStyle="light-content" />
         <Header style={styles.header}>
           <Left>
             <Button onPress={()=>props.navigation.navigate('Dashboard') } transparent>
@@ -145,7 +146,7 @@ function MyOrders(props) {
             </Button>
           </Left>
           <Body>
-            <Title><H2 style={{color:'#ffffff'}}>Orders</H2></Title>
+            <H3 style={{color:'#ffffff'}}>Orders</H3>
           </Body>
           <Right>
             <Button onPress={changeSearchBar} transparent>

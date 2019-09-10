@@ -1,6 +1,6 @@
 import React,{useEffect} from 'react'
-import { View,StatusBar,Platform,StyleSheet  } from 'react-native'
-import { Container, Header, Content, Card, CardItem,Text, Body,Left } from "native-base"
+import {StatusBar,Platform,StyleSheet  } from 'react-native'
+import { Container, Content, Card, CardItem,Text, Body } from "native-base"
 const OrderDetails = () => {
     useEffect( ()=>{
         if(Platform.OS==='android')
@@ -18,7 +18,7 @@ const OrderDetails = () => {
     return (
           <Container style={{backgroundColor:"#DFEED7"}}>
             <Content padder>
-              <Card style={{borderRadius:10,elevation:8}}>
+              <Card style={{borderRadius:10,elevation:4}}>
                 <CardItem bordered>
                    <Body>
                       <Text style={{color:'#8D8D8D',fontSize:14}}>Security Depositer</Text>

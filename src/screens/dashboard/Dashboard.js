@@ -1,6 +1,6 @@
 import React, {useEffect} from 'react'
-import { View, Text,StyleSheet,StatusBar,Image,ScrollView,Platform } from 'react-native'
-import { Container,H1,DeckSwiper,H2,Thumbnail,Title,Grid,Col,Badge, Header, Content, Card, CardItem, Button, Icon, Left, Body, Right } from 'native-base';
+import { View, Text,StyleSheet,StatusBar,Platform } from 'react-native'
+import { Container,H1,DeckSwiper,H2, Card, CardItem, Button, Icon, Left, Body, Right } from 'native-base';
 import { AnimatedCircularProgress } from 'react-native-circular-progress';
 
 
@@ -72,7 +72,8 @@ const Dashboard = () => {
           fontSize:11
         },
         iconFont:{
-          fontSize:27
+          fontSize:27,
+          color:'#ffffff'
         },
         cardNumber:{
           fontWeight:'bold'
@@ -80,7 +81,48 @@ const Dashboard = () => {
         icon:{
           color:'#cccccc',
           fontSize:18
+        },
+        myButton :{
+          padding: 5,
+          height: 60,
+          width: 60,  //The Width must be the same as the height
+          borderRadius:120, //Then Make the Border Radius twice the size of width or Height   
+          backgroundColor:'#6DB33F',
+          alignItems:'center',
+          justifyContent:'center'
+       
+        },
+        myButton2 :{
+          padding: 5,
+          height: 60,
+          width: 60,  //The Width must be the same as the height
+          borderRadius:120, //Then Make the Border Radius twice the size of width or Height   
+          backgroundColor:'#B35644',
+          alignItems:'center',
+          justifyContent:'center'
+       
+        },
+        myButton3 :{
+          padding: 5,
+          height: 60,
+          width: 60,  //The Width must be the same as the height
+          borderRadius:120, //Then Make the Border Radius twice the size of width or Height   
+          backgroundColor:'#425EB2',
+          alignItems:'center',
+          justifyContent:'center'
+       
+        },
+        myButton4 :{
+          padding: 5,
+          height: 60,
+          width: 60,  //The Width must be the same as the height
+          borderRadius:120, //Then Make the Border Radius twice the size of width or Height   
+          backgroundColor:'#B3AF27',
+          alignItems:'center',
+          justifyContent:'center'
+       
         }
+
     })
 
     const cards = [
@@ -103,21 +145,6 @@ const Dashboard = () => {
 
     return (
        <Container style={styles.container}>
-        {/* <Header style={styles.header}>
-          <Left>
-            <Button transparent>
-              <Icon type="Octicons" name='three-bars' />
-            </Button>
-          </Left>
-          <Body>
-            <Title>Dashboard </Title>
-          </Body>
-          <Right>
-            <Button transparent>
-              <Icon type="FontAwesome" name='user-circle' />
-            </Button>
-          </Right>
-        </Header> */}
         <View style={{flex:1}}>
 
             <View style={styles.firstTwoCardsStyle}>
@@ -125,9 +152,10 @@ const Dashboard = () => {
                   <Card>
                     <CardItem bordered>
                       <Left>
-                        <Button style={{backgroundColor:'#6DB33F',width: 60,height: 60,borderRadius: 60/2}} >
-                          <Icon  style={styles.iconFont} type="FontAwesome5" name="calendar-check" />
-                        </Button>
+                      
+                        <View style={styles.myButton}>
+                           <Icon  style={styles.iconFont} type="FontAwesome5" name="calendar-check" />
+                        </View>
                    
                         <Body>
                           <H2 style={styles.cardNumber}>125</H2>
@@ -141,9 +169,9 @@ const Dashboard = () => {
                     <Card>
                         <CardItem bordered>
                         <Left>
-                            <Button style={{backgroundColor:'#B35644',width: 60,height: 60,borderRadius: 60/2}} >
+                            <View style={styles.myButton2}>
                               <Icon  style={styles.iconFont} type="Feather" name="clock" />
-                            </Button>
+                            </View>
                             <Body>
                               <H2 style={styles.cardNumber}>30</H2>
                               <Text style={styles.buttonText} note>Pending Orders</Text>
@@ -159,10 +187,10 @@ const Dashboard = () => {
                   <Card>
                     <CardItem bordered>
                       <Left>
-                        <Button style={{backgroundColor:'#425EB2',width: 60,height: 60,borderRadius: 60/2,}} >
-                        <Icon style={styles.iconFont} type="MaterialIcons" name="device-hub" />
-                        </Button>
-                   
+                        <View style={styles.myButton3}>
+                          <Icon style={styles.iconFont} type="MaterialIcons" name="device-hub" />
+                        </View>
+               
                         <Body>
                           <H2 style={styles.cardNumber}>125</H2>
                           <Text style={styles.buttonText} note>Supply Channels</Text>
@@ -175,9 +203,9 @@ const Dashboard = () => {
                     <Card>
                         <CardItem bordered>
                         <Left>
-                            <Button style={{backgroundColor:'#B3AF27',width: 60,height: 60,borderRadius: 60/2,}} >
+                            <View style={styles.myButton3}>
                               <Icon style={styles.iconFont}  type="FontAwesome" name="users" />
-                            </Button>
+                            </View>
                             <Body>
                               <H2  style={styles.cardNumber}>30</H2>
                               <Text style={styles.buttonText}  note>Total Customers</Text>
@@ -195,7 +223,12 @@ const Dashboard = () => {
                   renderItem={item =>
                     <Card>
                 <CardItem bordered>
-                  <Text>YTD Sales by Sales Channel</Text>
+                  <Left>
+                    <Text>YTD Sales by Sales Channel</Text>
+                  </Left>
+                  <Right>
+                    <Text style={{fontSize:10,color:'#777777'}}>Swipe</Text>
+                  </Right>
                 </CardItem>
                 <CardItem bordered >
                   <View style={{flex:1,flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
@@ -264,10 +297,10 @@ const Dashboard = () => {
                         </Button>
                     </View>
                     <View style={{width:'23%',height:85,backgroundColor:'#B3AF27',borderRadius:4,padding:4,alignItems:'center'}}>
-                      <Text style={styles.bottomStatsTextStyle}>
+                        <Text style={styles.bottomStatsTextStyle}>
                             Email Templates
-                      </Text>
-                      <Button style={{backgroundColor:'#989216',width: 50,height: 50,borderRadius: 50/2,marginTop:5}} >
+                        </Text>
+                        <Button style={{backgroundColor:'#989216',width: 50,height: 50,borderRadius: 50/2,marginTop:5}} >
                             <Text style={styles.bottomStatsInnerTextStyle}>10</Text>
                         </Button>
                     </View>
