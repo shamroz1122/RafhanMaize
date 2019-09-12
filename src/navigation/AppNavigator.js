@@ -12,12 +12,75 @@ import Corporation from '../screens/customers/Corporation';
 import Login from '../screens/auth/Login';
 import {createSwitchNavigator,createAppContainer,createDrawerNavigator,createBottomTabNavigator,createStackNavigator} from 'react-navigation'
 import Rafhanlogo from '../../assets/RafhanLogocolor.png'
-import {Image,Text,Platform} from 'react-native'
+import {Image,Text,Animated, Easing,Platform} from 'react-native'
 import {Thumbnail,Icon} from 'native-base'
 import { Ionicons, AntDesign,Entypo,FontAwesome,FontAwesome5 } from '@expo/vector-icons';
 import NewOrder from '../screens/home/NewOrders';
 
 const uri = "https://facebook.github.io/react-native/docs/assets/favicon.png";
+
+
+// const FadeTransition = (index, position) => {
+//   const screenRange = [index-1, index]
+//   const outputOpacity = [0,1]
+//   const transition = position.interpolate({
+//     inputRange: screenRange,
+//     outputOpacity: outputOpacity
+//   })
+
+//   return {
+//     opacity: transition
+//   }
+
+// }
+
+// const BottomTransition = (index, position,height) => {
+//   const sceneRange = [index-1, index]
+//   const outputHeight = [height,0]
+//   const transition = position.interpolate({
+//     inputRange: sceneRange,
+//     outputRnage: outputHeight
+//   })
+
+//   return {
+//     transform: [{translateY:transition}]
+//   }
+
+// }
+let SlideFromRight = (index, position, width) => {
+  const translateX = position.interpolate({
+    inputRange: [index - 1, index],
+    outputRange: [width, 0],
+  })
+
+  return { transform: [ { translateX } ] }
+};
+
+
+const TransitionConfiguration = () => {
+  return {
+    transitionSpec: {
+      duration: 650,
+      easing: Easing.out(Easing.poly(4)),
+      timing: Animated.timing,
+      useNativeDriver: true,
+    },
+    screenInterpolator: (sceneProps) => {
+      const { layout, position, scene } = sceneProps;
+      const width = layout.initWidth;
+      const height = layout.initHeight;
+      const { index, route } = scene
+      const params = route.params || {}; // <- That's new
+      const transition = params.transition || 'default'; // <- That's new
+      return {
+        default: SlideFromRight(index, position, width)
+        // bottomTransition: SlideFromBottom(index, position, height),
+        // collapseTransition: CollapseTransition(index, position)
+      }[transition];
+    },
+  }
+}
+
 const HomeStack = createStackNavigator({
   Home:{screen:Home,
     navigationOptions:({ navigation }) => {
@@ -56,7 +119,11 @@ const HomeStack = createStackNavigator({
         header:null
       }
     }}
-})
+},{
+  initialRouteName: 'Home',
+  headerMode: 'screen',
+  transitionConfig: TransitionConfiguration,
+  })
 
 const DashboardStack = createStackNavigator({
   Dashboard:{screen:Dashboard,
@@ -71,7 +138,11 @@ const DashboardStack = createStackNavigator({
       }
     }
   }
-})
+},{
+  initialRouteName: 'Dashboard',
+  headerMode: 'screen',
+  transitionConfig: TransitionConfiguration,
+  })
 
 const MyOrdersStack = createStackNavigator({
   MyOrders:{screen:MyOrders,
@@ -93,7 +164,11 @@ const MyOrdersStack = createStackNavigator({
         headerTintColor: '#ffffff',
       }
     }}
-})
+},{
+  initialRouteName: 'MyOrders',
+  headerMode: 'screen',
+  transitionConfig: TransitionConfiguration,
+  })
 
 const MyProductsStack = createStackNavigator({
   MyProducts:{screen:MyProducts,
@@ -104,7 +179,11 @@ const MyProductsStack = createStackNavigator({
          header:null
       }
     }}
-})
+},{
+  initialRouteName: 'MyProducts',
+  headerMode: 'screen',
+  transitionConfig: TransitionConfiguration,
+  })
 
 const MyCustomersStack = createStackNavigator({
   MyCustomer:{screen:MyCustomers,
@@ -117,16 +196,23 @@ const MyCustomersStack = createStackNavigator({
     }},
     Corporation:{screen:Corporation,
     navigationOptions:({ navigation }) => {
+      
       let params =  navigation.getParam('customer')
 
       return {
         headerTitle: <Text style={{color:"#ffffff",paddingBottom:25,fontSize:22}}>{params.customerName}</Text>,
         headerStyle:{height:30,backgroundColor:'#6DB33F',color:"#ffffff"},
-        headerBackTitle: null,
-        headerBackImage:  <Icon type="AntDesign" style={{fontSize:20,color:'#ffffff',marginBottom:20}} small name="left"  />
+        headerBackImage: Platform.OS === 'android'? <Icon type="AntDesign" style={{fontSize:20,color:'#ffffff',marginBottom:20}} small name="left"  /> :null,
+        headerTintColor: '#ffffff',
+    
       }
+
     }},
-})
+},{
+  initialRouteName: 'MyCustomer',
+  headerMode: 'screen',
+  transitionConfig: TransitionConfiguration,
+  })
 
 const ReportsStack = createStackNavigator({
   Reports:{screen:Reports,
@@ -139,6 +225,10 @@ const ReportsStack = createStackNavigator({
         ),
       }
     }}
+},{
+  initialRouteName: 'Reports',
+  headerMode: 'screen',
+  transitionConfig: TransitionConfiguration,
 })
 
 const IconStyle = function(myColor) {
@@ -266,8 +356,7 @@ const DashboardTabNavigator = createBottomTabNavigator({
         fontSize: 8,
     
       },
-    },
-   
+    }
   }
   )
 

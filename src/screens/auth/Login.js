@@ -1,11 +1,24 @@
-import React, {useEffect} from 'react'
+import React, {useState,useEffect} from 'react'
 import { StyleSheet,ImageBackground, Text, View,Image,KeyboardAvoidingView,StatusBar,Platform } from 'react-native';
-import { Icon,Input,Item,Button } from 'native-base';
+import { Icon,Input,Item,Button,Spinner  } from 'native-base';
 import logo from '../../../assets/logo.png'
 import Rafhanlogo from '../../../assets/RafhanLogocolor.png'
 import loginBg from '../../../assets/login_bg.png'
+import { connect } from 'react-redux'
+import { login } from '../../redux/actions/authActions'
 
 function Login(props){
+
+            const [credentials,setCredentials] = useState({
+                    email:'',
+                    password:''
+            })
+            const [state,setState] = useState({
+          
+                isLoading:false,
+                errors:{}
+            })
+
 
     useEffect( ()=>{
         if(Platform.OS==='android')
@@ -55,6 +68,20 @@ function Login(props){
         }
     });
 
+
+    const onChangeUsername = (text) => {
+        setCredentials({...credentials,username:text})
+    }
+    const onChangePassword = (text) => {
+        setCredentials({...credentials,password:text})
+    }
+
+    const onLogin = (e) => {
+        setState({...state,isLoading:true})
+        props.login(credentials)
+    }
+
+
     return (
 
         <View style={styles.container}>
@@ -72,18 +99,27 @@ function Login(props){
                            
                                 <View style={styles.formFlex}>
                                 <KeyboardAvoidingView behavior="padding" enabled >
+
+
                                     <Item >
                                         <Icon android="md-person" ios="ios-person"/>
-                                        <Input placeholderTextColor="#6CB33E" placeholder='USERNAME'/>
+                                        <Input onChangeText={onChangeUsername}  value={credentials.username} name="username" placeholderTextColor="#6CB33E" placeholder='USERNAME'/>
+                                           
                                     </Item>
                                     <Item >
                                       
                                         <Icon android="md-lock" ios="ios-lock"/>
-                                        <Input secureTextEntry={true} placeholderTextColor="#6CB33E" placeholder='PASSWORD'/>
+                                        <Input onChangeText={onChangePassword} value={credentials.password} name="password" secureTextEntry={true} placeholderTextColor="#6CB33E" placeholder='PASSWORD'/>
                                     </Item>
-                                    <Button block style={styles.button} onPress={()=>props.navigation.navigate('Home') }>
+                                    
+
+                                    {state.isLoading?<Spinner color='#6DB33F' />:  <Button block style={styles.button} onPress={onLogin}>
                                         <Text style={{color:'#ffffff'}}>LOGIN</Text>
-                                    </Button>
+                                    </Button>}
+                                  
+                                  
+
+
                                     </KeyboardAvoidingView>
                                 </View>
                       
@@ -94,4 +130,11 @@ function Login(props){
     )
 }
 
-export default Login
+const mapDispatchToProps = (dispatch) => {
+
+    return {
+        login: (creds) => dispatch(login(creds))
+    }
+}
+
+export default connect(null, mapDispatchToProps)(Login)

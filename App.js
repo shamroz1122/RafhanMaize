@@ -4,45 +4,8 @@ import * as Font from 'expo-font';
 import { StyleSheet, View  } from 'react-native';
 import AppNavigator from './src/navigation/AppNavigator';
 import { Ionicons } from '@expo/vector-icons'
-// export App function App(props) {
-
-//   const [state,setState] = useState({
-//       loading: true,
-//       token: ''
-//   });
-
-//   const styles = StyleSheet.create({
-  
-//   });
-
-//   useEffect( ()=>{
-//     declareFont()
-//   },[])
-
-//   const declareFont = async () =>{
-//     await Font.loadAsync({
-//       Roboto: require("native-base/Fonts/Roboto.ttf"),
-//       Roboto_medium: require("native-base/Fonts/Roboto_medium.ttf")
-//     });
- 
-//     setState({ loading: false });
-//   }
-
-//     if (state.loading) {
-//           return (
-//             <View>
-//               <AppLoading />
-//             </View>
-//           );
-//         }
-//         return ( 
-//           <View style={{flex:1}}>
-//              {/* <AppNavigator /> */}
-//              <AppContainer />
-//           </View>
-//         );
-
-//     }
+import store from './src/redux/store'
+import { Provider } from 'react-redux'
 
     class App extends Component {
       constructor(props) {
@@ -67,9 +30,12 @@ import { Ionicons } from '@expo/vector-icons'
         }
     
         return (
-          <View style={{flex:1}}>
-           <AppNavigator />
-          </View>
+          <Provider store={store}>
+              <View style={{flex:1}}>
+              <AppNavigator />
+              </View>
+          </Provider>
+        
         );
       }
 

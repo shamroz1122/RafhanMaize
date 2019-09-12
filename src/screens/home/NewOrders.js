@@ -306,7 +306,7 @@ function NewOrder(){
                          <Item picker style={{border:'none'}}>
                             <Picker
                               mode="dropdown"
-                              style={{ color:'#777777',fontSize:8}}
+                            
                               iosIcon={<Icon name="arrow-down" />}
                               placeholder="Product Name"
                               placeholderStyle={{ color: "#777777" }}
@@ -394,14 +394,14 @@ function NewOrder(){
                                     <Picker
                                       mode="dropdown"
                                       iosIcon={<Icon name="arrow-down" />}
-                                      style={{ color:'#777777',fontSize:8}}
+                                   
                                       placeholder="Customer"
                                       placeholderStyle={{ color: "#777777" }}
                                       placeholderIconColor="#777777" 
                                       selectedValue={state.customer}
                                       onValueChange={onCustomerPicker}
                                     >
-                                      <Picker.Item style={{color:'#777777'}} label="Customer*" value="key0" />
+                                      <Picker.Item label="Customer*" value="key0" />
                                       <Picker.Item label="Asim" value="key1" />
                                       <Picker.Item label="Shamroz" value="key2" />
                                       <Picker.Item label="Azhar Iqbal" value="key3" />

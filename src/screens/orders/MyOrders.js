@@ -25,6 +25,7 @@ function MyOrders(props) {
         {
           StatusBar.setBarStyle( 'light-content',true)
           StatusBar.setBackgroundColor("#60993A")
+          StatusBar.setTranslucent(false)
         }
       
         setState(
@@ -138,7 +139,7 @@ function MyOrders(props) {
 
     return (
      <Container style={{backgroundColor:"#DFEED7"}}>
-     <StatusBar backgroundColor="#60993A" barStyle="light-content" />
+    
         <Header style={styles.header}>
           <Left>
             <Button onPress={()=>props.navigation.navigate('Dashboard') } transparent>
