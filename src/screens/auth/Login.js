@@ -1,11 +1,12 @@
 import React, {useState,useEffect} from 'react'
 import { StyleSheet,ImageBackground, Text, View,Image,KeyboardAvoidingView,StatusBar,Platform } from 'react-native';
-import { Icon,Input,Item,Button,Spinner  } from 'native-base';
+import { Icon,Input,Item,Button,Spinner,Toast } from 'native-base';
 import logo from '../../../assets/logo.png'
 import Rafhanlogo from '../../../assets/RafhanLogocolor.png'
 import loginBg from '../../../assets/login_bg.png'
 import { connect } from 'react-redux'
 import { login } from '../../redux/actions/authActions'
+import { State } from 'react-native-gesture-handler';
 
 function Login(props){
 
@@ -16,17 +17,39 @@ function Login(props){
             const [state,setState] = useState({
           
                 isLoading:false,
-                errors:{}
+                showToast: false
             })
 
+        useEffect( ()=>{
+         
+            if(Platform.OS==='android')
+            {
+                StatusBar.setBarStyle('light-content',true)
+                StatusBar.setBackgroundColor("#333333")
+            }
+        },[]) 
 
-    useEffect( ()=>{
-        if(Platform.OS==='android')
-        {
-          StatusBar.setBarStyle('light-content',true)
-          StatusBar.setBackgroundColor("#333333")
-        }
-      },[]) 
+        useEffect( ()=>{
+               console.log('updated')
+               if (props.isAuthenticated) {
+                    setState({...state,isLoading:false})
+                    props.navigation.navigate('Home'); // push user to dashboard when they login
+                }
+
+                if(props.authError)
+                {
+
+                    Toast.show({
+                        text: props.authError,
+                        buttonText: "Ok",
+                        duration: 3000,
+                        type: "danger",
+                        
+                    })
+                    setState({...state,isLoading:false})
+                }
+
+        },[props.authError,props.isAuthenticated]) 
 
     const styles = StyleSheet.create({
         container:{
@@ -70,7 +93,7 @@ function Login(props){
 
 
     const onChangeUsername = (text) => {
-        setCredentials({...credentials,username:text})
+        setCredentials({...credentials,email:text})
     }
     const onChangePassword = (text) => {
         setCredentials({...credentials,password:text})
@@ -78,6 +101,7 @@ function Login(props){
 
     const onLogin = (e) => {
         setState({...state,isLoading:true})
+       // console.log(props) 
         props.login(credentials)
     }
 
@@ -85,6 +109,7 @@ function Login(props){
     return (
 
         <View style={styles.container}>
+     
                     <ImageBackground source={loginBg} style={{width: '100%', height: '100%'}}>
                                 <View style={styles.imageFlex}>
 
@@ -102,8 +127,8 @@ function Login(props){
 
 
                                     <Item >
-                                        <Icon android="md-person" ios="ios-person"/>
-                                        <Input onChangeText={onChangeUsername}  value={credentials.username} name="username" placeholderTextColor="#6CB33E" placeholder='USERNAME'/>
+                                        <Icon android="md-mail" ios="ios-mail"/>
+                                        <Input onChangeText={onChangeUsername}  value={credentials.username} name="username" placeholderTextColor="#6CB33E" placeholder='EMAIL'/>
                                            
                                     </Item>
                                     <Item >
@@ -112,14 +137,11 @@ function Login(props){
                                         <Input onChangeText={onChangePassword} value={credentials.password} name="password" secureTextEntry={true} placeholderTextColor="#6CB33E" placeholder='PASSWORD'/>
                                     </Item>
                                     
-
+                                
                                     {state.isLoading?<Spinner color='#6DB33F' />:  <Button block style={styles.button} onPress={onLogin}>
                                         <Text style={{color:'#ffffff'}}>LOGIN</Text>
                                     </Button>}
                                   
-                                  
-
-
                                     </KeyboardAvoidingView>
                                 </View>
                       
@@ -130,6 +152,13 @@ function Login(props){
     )
 }
 
+const mapStateToProps = (state) => {
+    return {
+        authError: state.auth.authError,
+        isAuthenticated: state.auth.isAuthenticated
+    }
+}
+
 const mapDispatchToProps = (dispatch) => {
 
     return {
@@ -137,4 +166,4 @@ const mapDispatchToProps = (dispatch) => {
     }
 }
 
-export default connect(null, mapDispatchToProps)(Login)
+export default connect(mapStateToProps, mapDispatchToProps)(Login)

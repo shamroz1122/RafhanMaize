@@ -1,11 +1,32 @@
 import React,{useEffect} from 'react'
-import {View, StyleSheet,StatusBar,TouchableOpacity,Platform } from 'react-native';
+import {View, StyleSheet,StatusBar,TouchableOpacity,Platform,AsyncStorage } from 'react-native';
 import { Container, Content, Button,Card, CardItem, Text,Icon,Right } from 'native-base'
 
 
 function Home(props){
 
     useEffect( ()=>{
+
+      AsyncStorage.getItem('AdminToken', (err, token) => {
+        if (err) {
+          console.log('Not found token :', err)
+        } else {
+        
+          
+          console.log('token',token)
+        }
+      })
+  
+      AsyncStorage.getItem('User', (err, user) => {
+        if (err) {
+          console.log('Not found user :', err)
+        } else {
+      
+          console.log('user',user)
+        }
+      })
+    
+
       if(Platform.OS==='android')
       {
         StatusBar.setBarStyle( 'light-content',true)
