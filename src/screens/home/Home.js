@@ -7,26 +7,6 @@ function Home(props){
 
     useEffect( ()=>{
 
-      AsyncStorage.getItem('AdminToken', (err, token) => {
-        if (err) {
-          console.log('Not found token :', err)
-        } else {
-        
-          
-          console.log('token',token)
-        }
-      })
-  
-      AsyncStorage.getItem('User', (err, user) => {
-        if (err) {
-          console.log('Not found user :', err)
-        } else {
-      
-          console.log('user',user)
-        }
-      })
-    
-
       if(Platform.OS==='android')
       {
         StatusBar.setBarStyle( 'light-content',true)

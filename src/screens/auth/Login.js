@@ -12,7 +12,7 @@ function Login(props){
 
             const [credentials,setCredentials] = useState({
                     email:'',
-                    password:''
+                    password:'' 
             })
             const [state,setState] = useState({
           
@@ -30,7 +30,7 @@ function Login(props){
         },[]) 
 
         useEffect( ()=>{
-               console.log('updated')
+       
                if (props.isAuthenticated) {
                     setState({...state,isLoading:false})
                     props.navigation.navigate('Home'); // push user to dashboard when they login

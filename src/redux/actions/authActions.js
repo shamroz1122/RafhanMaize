@@ -17,9 +17,8 @@ export const login = Data => dispatch => {
                 
                         // Set token to localStorage
                         const token = res.data.token;
-                        AsyncStorage.setItem("AdminToken", token);
-                     
-                        AsyncStorage.setItem("User", res.data.user);
+                        AsyncStorage.setItem("User", JSON.stringify(res.data.user));
+                        AsyncStorage.setItem("Token", token);
                         setAuthToken(token);
                 
                         dispatch({type: 'LOGIN_SUCCESS',user:res.data.user})
@@ -28,7 +27,7 @@ export const login = Data => dispatch => {
 
         })
         .catch((err) => {
-             console.log(err)
+        //      console.log(err)
                 dispatch({type: 'LOGIN_ERROR',msg:'Invalid Credentials'})
         }
     );

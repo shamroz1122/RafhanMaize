@@ -23,30 +23,33 @@ import jwt_decode from "jwt-decode";
 
   componentWillMount() {
     // Check for token to keep user logged in
-    AsyncStorage.getItem('AdminToken', (err, token) => {
+    AsyncStorage.getItem('Token', (err, token) => {
       if (err) {
         console.log('Not found token :', err)
       } else {
         this.setState({ token })
+      
+       // console.log('Token',token)
       }
     })
-
+  
     AsyncStorage.getItem('User', (err, user) => {
       if (err) {
         console.log('Not found token :', err)
       } else {
         this.setState({ user })
+      
+      //  console.log('user',user)
       }
     })
+
+
   }
 
-
-  componentDidMount() {
+  componentDidUpdate(prevProps) {
     const { token, user } = this.state
-
     console.log('token',token)
-    console.log('token',token)
-    
+ 
     // Set auth token header auth
     setAuthToken(token);
     // Decode token and get user info and exp
@@ -63,10 +66,7 @@ import jwt_decode from "jwt-decode";
     }
     this.props.navigation.navigate('Home')
   }
-
-
-
-
+  
       async componentDidMount() {
         await Font.loadAsync({
           Roboto: require('native-base/Fonts/Roboto.ttf'),
@@ -74,7 +74,10 @@ import jwt_decode from "jwt-decode";
           ...Ionicons.font,
         });
         this.setState({ isReady: true });
+
+
       }
+      
 
       render() {
         if (!this.state.isReady) {
