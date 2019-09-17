@@ -10,43 +10,17 @@ import MyProfile from '../screens/home/Profile';
 import Home from '../screens/home/Home';
 import Corporation from '../screens/customers/Corporation';
 import Login from '../screens/auth/Login';
+import Logout from '../screens/auth/Logout';
+import AuthLoadingScreen  from '../screens/auth/AuthLoadingScreen';
 import {createSwitchNavigator,createAppContainer,createDrawerNavigator,createBottomTabNavigator,createStackNavigator} from 'react-navigation'
 import Rafhanlogo from '../../assets/RafhanLogocolor.png'
 import {Image,Text,Animated, Easing,Platform} from 'react-native'
 import {Thumbnail,Icon} from 'native-base'
 import { Ionicons, AntDesign,Entypo,FontAwesome,FontAwesome5 } from '@expo/vector-icons';
-import NewOrder from '../screens/home/NewOrders';
 
 const uri = "https://facebook.github.io/react-native/docs/assets/favicon.png";
 
 
-// const FadeTransition = (index, position) => {
-//   const screenRange = [index-1, index]
-//   const outputOpacity = [0,1]
-//   const transition = position.interpolate({
-//     inputRange: screenRange,
-//     outputOpacity: outputOpacity
-//   })
-
-//   return {
-//     opacity: transition
-//   }
-
-// }
-
-// const BottomTransition = (index, position,height) => {
-//   const sceneRange = [index-1, index]
-//   const outputHeight = [height,0]
-//   const transition = position.interpolate({
-//     inputRange: sceneRange,
-//     outputRnage: outputHeight
-//   })
-
-//   return {
-//     transform: [{translateY:transition}]
-//   }
-
-// }
 let SlideFromRight = (index, position, width) => {
   const translateX = position.interpolate({
     inputRange: [index - 1, index],
@@ -335,8 +309,9 @@ const DashboardTabNavigator = createBottomTabNavigator({
           tabBarLabel:'My Customers'
         }
       }
-    },
-    Reports:{screen:ReportsStack}  
+    }
+    // ,
+    // Reports:{screen:ReportsStack}  
   },
   {
     defaultNavigationOptions: ({ navigation }) => ({
@@ -394,13 +369,45 @@ const DashboardTabNavigator = createBottomTabNavigator({
     },
     MyProfile:{
      screen:MyProfile
-    }
+    },
+    Logout:{
+      screen:Logout
+     }
+     
+
     
   })
 
-  const AppSwitchNavigator = createSwitchNavigator({
-    Login:{screen:Login},
+  const AuthStack = createStackNavigator({ 
+    Login:{screen:Login} 
+  },{
+    defaultNavigationOptions:({navigation})=>{
+      return {
+        header:null
+      }
+    }
+  });
+
+  const AppStack  = createStackNavigator({ 
     Home:AppDrawerNavigator
+   },{
+    defaultNavigationOptions:({navigation})=>{
+      return {
+        header:null
+      }
+    }
+  });
+
+  // const AppSwitchNavigator = createSwitchNavigator({
+  //   Login:{screen:Login},
+  //   Home:AppDrawerNavigator
+  // })
+
+   const AppSwitchNavigator = createSwitchNavigator({
+      AuthLoading: AuthLoadingScreen,
+      App: AppStack,
+      Auth: AuthStack,
   })
+
 
  export default createAppContainer(AppSwitchNavigator)

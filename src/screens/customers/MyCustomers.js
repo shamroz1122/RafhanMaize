@@ -149,6 +149,14 @@ function MyCustomers(props) {
       )
     }
 
+    if(Platform.OS==='android')
+    {
+      var mycustomerTitle = <H3 style={{color:'#ffffff'}}>My Customers</H3>
+    }else{
+      var mycustomerTitle = <Text style={{color:'#ffffff',fontSize:18}}>My Customers</Text>
+    }
+
+
     return (
      <Container style={{backgroundColor:"#DFEED7"}}>
         <Header style={styles.header}>
@@ -158,7 +166,7 @@ function MyCustomers(props) {
             </Button>
           </Left>
           <Body>
-            <H3 style={{color:'#ffffff'}}>My Customers</H3>
+           { mycustomerTitle }
           </Body>
           <Right>
             <Button onPress={changeSearchBar} transparent>

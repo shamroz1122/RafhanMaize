@@ -27,7 +27,7 @@ export const login = Data => dispatch => {
 
         })
         .catch((err) => {
-        //      console.log(err)
+    
                 dispatch({type: 'LOGIN_ERROR',msg:'Invalid Credentials'})
         }
     );
@@ -40,14 +40,14 @@ export const setCurrentUser = Data => dispatch => {
 };
 
 // Log user out
-export const logOutUser = (navigation) => dispatch => {
+export const logOutUser = Data => dispatch => {
         // Remove token from local storage
-        AsyncStorage.removeItem("AdminToken");
+        AsyncStorage.clear();
         // Remove auth header for future requests
         setAuthToken(false);
         // Set isAuthenticated to false
         dispatch({type: 'LOGOUT_USER'})
-        navigation.navigate('SignIn')
+       
     };
 
 

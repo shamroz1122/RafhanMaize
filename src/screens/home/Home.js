@@ -1,5 +1,5 @@
 import React,{useEffect} from 'react'
-import {View, StyleSheet,StatusBar,TouchableOpacity,Platform,AsyncStorage } from 'react-native';
+import {View, StyleSheet,StatusBar,TouchableOpacity,Platform } from 'react-native';
 import { Container, Content, Button,Card, CardItem, Text,Icon,Right } from 'native-base'
 
 

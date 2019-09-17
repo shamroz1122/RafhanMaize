@@ -6,7 +6,6 @@ import Rafhanlogo from '../../../assets/RafhanLogocolor.png'
 import loginBg from '../../../assets/login_bg.png'
 import { connect } from 'react-redux'
 import { login } from '../../redux/actions/authActions'
-import { State } from 'react-native-gesture-handler';
 
 function Login(props){
 
@@ -33,7 +32,7 @@ function Login(props){
        
                if (props.isAuthenticated) {
                     setState({...state,isLoading:false})
-                    props.navigation.navigate('Home'); // push user to dashboard when they login
+                    props.navigation.navigate('App'); // push user to dashboard when they login
                 }
 
                 if(props.authError)
