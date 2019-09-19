@@ -1,15 +1,17 @@
 import axios from 'axios';
 import setAuthToken from "../../utils/setAuthToken";
+import setBasePath from "../../utils/setBasePath";
 import { AsyncStorage } from 'react-native';
 
 
 // Login - get user token
 export const login = Data => dispatch => {
 
-        axios.post("http://order.rafhanmaize.com/dev/public/api/user_login", Data)
+        setBasePath()
+
+        axios.post("/user_login", Data)
         .then((res) => {
               
-
                if(res.data.success == false)
                {
                         dispatch({type: 'LOGIN_ERROR',msg:res.data.message[0]})
@@ -22,7 +24,6 @@ export const login = Data => dispatch => {
                         setAuthToken(token);
                 
                         dispatch({type: 'LOGIN_SUCCESS',user:res.data.user})
-
                } 
 
         })

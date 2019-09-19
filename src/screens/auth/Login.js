@@ -65,7 +65,7 @@ function Login(props){
         formFlex: {
             flex: 3,
             flexDirection: 'column',
-            height:700,
+            // height:700,
             padding:40,
        
         },
@@ -121,9 +121,8 @@ function Login(props){
                             
                                 </View>
                            
-                                <View style={styles.formFlex}>
-                                <KeyboardAvoidingView behavior="padding" enabled >
-
+                             
+                                <KeyboardAvoidingView   behavior= {(Platform.OS === 'ios')? "padding" : null} style={styles.formFlex}>
 
                                     <Item >
                                         <Icon android="md-mail" ios="ios-mail"/>
@@ -141,8 +140,8 @@ function Login(props){
                                         <Text style={{color:'#ffffff'}}>LOGIN</Text>
                                     </Button>}
                                   
-                                    </KeyboardAvoidingView>
-                                </View>
+                                </KeyboardAvoidingView>
+                            
                       
 
                         </ImageBackground>

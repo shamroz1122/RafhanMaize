@@ -1,7 +1,8 @@
 import React from 'react';
-import { ActivityIndicator,AsyncStorage,StatusBar,View,} from 'react-native';
+import { ActivityIndicator,AsyncStorage,StatusBar,View} from 'react-native';
 import { setCurrentUser, logOutUser } from '../../redux/actions/authActions';
 import setAuthToken from '../../utils/setAuthToken';
+import setBasePath from "../../utils/setBasePath";
 import jwt_decode from "jwt-decode";
 import { connect } from 'react-redux'
 
@@ -30,6 +31,7 @@ class AuthLoadingScreen extends React.Component {
             this.props.dispatch(logOutUser());
             this.props.navigation.navigate('Auth');
         }else{
+            setBasePath()
             setAuthToken(userToken);
             this.props.dispatch(setCurrentUser(User));
             this.props.navigation.navigate('App');

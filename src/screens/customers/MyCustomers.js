@@ -1,5 +1,5 @@
 import React,{useState,useEffect} from 'react'
-import {View,Text,StatusBar,Platform,StyleSheet,TouchableOpacity} from 'react-native'
+import {View,Text,Platform,StyleSheet,TouchableOpacity} from 'react-native'
 import { Container, Header, Left, Body, Right, Button, Icon,Content,H3,Card, CardItem,Item,Input } from 'native-base';
 function MyCustomers(props) {
 
@@ -21,11 +21,11 @@ function MyCustomers(props) {
 
     useEffect( ()=>{
     
-        if(Platform.OS==='android')
-        {
-          StatusBar.setBarStyle( 'light-content',true)
-          StatusBar.setBackgroundColor("#60993A")
-        }
+        // if(Platform.OS==='android')
+        // {
+        //   StatusBar.setBarStyle( 'light-content',true)
+        //   StatusBar.setBackgroundColor("#60993A")
+        // }
       
         setState(
           (state) =>({ 
@@ -159,7 +159,7 @@ function MyCustomers(props) {
 
     return (
      <Container style={{backgroundColor:"#DFEED7"}}>
-        <Header style={styles.header}>
+        <Header androidStatusBarColor="#60993A" style={styles.header}>
           <Left>
             <Button onPress={()=>props.navigation.navigate('MyProducts') } transparent>
                <Icon  type="AntDesign" style={{fontSize:20,color:'#ffffff'}} small name="left"  />
