@@ -1,15 +1,7 @@
-import React,{useEffect} from 'react'
-import { View,StyleSheet,Platform,StatusBar,Text } from 'react-native';
-import { Container,Header, Content, Card, CardItem,H3, Button, Icon, Left, Body } from 'native-base';
+import React from 'react'
+import { View,StyleSheet,Text } from 'react-native';
+import { Container,Header, Content, Card, CardItem,H3, Button, Icon, Left, Body, Right } from 'native-base';
 const Corporation = (props) => {
-    useEffect( ()=>{
-        if(Platform.OS==='android')
-        {
-          StatusBar.setBarStyle('light-content',true)
-          StatusBar.setBackgroundColor("#60993A")
-        }
-      },[]) 
-
 
       const styles = StyleSheet.create({
           header:{
@@ -33,7 +25,7 @@ const Corporation = (props) => {
 
     return (
           <Container style={{backgroundColor:"#DFEED7"}}>
-          <Header style={styles.header}>
+          <Header androidStatusBarColor="#60993A" style={styles.header}>
           <Left>
                 <Button onPress={()=>props.navigation.navigate('Home') } transparent>
                   <Icon  type="AntDesign" style={{fontSize:20,color:'#ffffff'}} small name="left"  />
@@ -42,6 +34,9 @@ const Corporation = (props) => {
           <Body>
             <H3 style={{color:'#ffffff'}}>My Profile</H3>
           </Body>
+          <Right>
+              
+          </Right>
       
         </Header>
             <Content padder>

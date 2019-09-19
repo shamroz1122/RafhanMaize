@@ -1,16 +1,21 @@
 import React from 'react';
-import { ActivityIndicator,AsyncStorage,StatusBar,View} from 'react-native';
+import { AsyncStorage,StatusBar,View} from 'react-native';
 import { setCurrentUser, logOutUser } from '../../redux/actions/authActions';
 import setAuthToken from '../../utils/setAuthToken';
 import setBasePath from "../../utils/setBasePath";
 import jwt_decode from "jwt-decode";
 import { connect } from 'react-redux'
-
+import loaderImage from '../../../assets/loader-gif.gif'
+import {Image} from 'react-native'
+import Spinner from 'react-native-loading-spinner-overlay';
 
 class AuthLoadingScreen extends React.Component {
   constructor(props) {
     super(props);
     this._AppAsync();
+    this.state = {
+      isReady: true,
+    };
   }
 
   // Fetch the token from storage then navigate to our appropriate place
@@ -34,30 +39,34 @@ class AuthLoadingScreen extends React.Component {
             setBasePath()
             setAuthToken(userToken);
             this.props.dispatch(setCurrentUser(User));
-            this.props.navigation.navigate('App');
+            this.setState({ isReady: false });
+           await this.props.navigation.navigate('App');
         }
 
     }else{
-        this.props.navigation.navigate('Auth');
+        this.setState({ isReady: false });
+       await this.props.navigation.navigate('Auth');
     }
 
   };
 
+
   // Render any loading content that you like here
   render() {
+    const customIndicator = <Image source={loaderImage} style={{height: 50, width: 50,position:'absolute'}}/>
     return (
       <View style={{flex:1,justifyContent:'center',alignItems:'center'}}>
-        <ActivityIndicator size='large' color="" />
+        <Spinner
+          visible={this.state.isReady}
+          customIndicator={customIndicator}
+        />
         <StatusBar barStyle="default" />
       </View>
     );
   }
 }
 
-
-
 const mapDispatchToProps = (dispatch) => {
-
     return {
         setCurrentUser: (User) => dispatch(setCurrentUser(User)),
         logOutUser: (User) => dispatch(logOutUser(User))

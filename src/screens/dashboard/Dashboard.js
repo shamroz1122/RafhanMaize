@@ -1,14 +1,16 @@
 import React, {useEffect,useState} from 'react'
-import { View, Text,StyleSheet,StatusBar,Platform } from 'react-native'
-import { Container,H1,DeckSwiper,Content,H2, Card, CardItem, Button, Icon, Left, Body, Right } from 'native-base';
+import { View, Text,StyleSheet,StatusBar,Platform,Image } from 'react-native'
+import { Container,H1,Content,H2, Card, CardItem, Icon, Left, Body, Right } from 'native-base';
 import { AnimatedCircularProgress } from 'react-native-circular-progress';
 import { connect } from 'react-redux'
 import { getDashboardSats } from '../../redux/actions/dashboardActions'
+import Spinner from 'react-native-loading-spinner-overlay';
+import loaderImage from '../../../assets/loader-gif.gif'
 
 const Dashboard = (props) => {
 
    const [state,setState] = useState({
-     loadingScreen:false,
+     loadingScreen:true,
      delivered_orders:'',
      supply_channels:'',
      total_customer:'', 
@@ -36,21 +38,26 @@ const Dashboard = (props) => {
        }else{
          console.log(props.middleSection.Domestic)
       
-          setState((state)=>({
-            ...state,
-            delivered_orders: props.upperSection.delivery_orders,
-            pending_orders: props.upperSection.pending_orders,
-            supply_channels: props.upperSection.supply_channels,
-            total_customer: props.upperSection.total_customer,
-            channels: props.middleSection.Domestic,
-            total_products: props.footerSection.total_products,
-            users: props.footerSection.users,
-            attachment: props.footerSection.attachment,
-            email_templates: props.footerSection.email_templates,
-
-
-          })
-          )
+         if(Object.keys(props.upperSection).length)
+         {
+         
+             setState((state)=>({
+               ...state,
+ 
+               delivered_orders: props.upperSection.delivery_orders,
+               pending_orders: props.upperSection.pending_orders,
+               supply_channels: props.upperSection.supply_channels,
+               total_customer: props.upperSection.total_customer,
+               channels: props.middleSection.Domestic,
+               total_products: props.footerSection.total_products,
+               users: props.footerSection.users,
+               attachment: props.footerSection.attachment,
+               email_templates: props.footerSection.email_templates,
+               loadingScreen:false
+ 
+             })
+             )
+         }
        }
    
       },[props.error,props.upperSection,props.middleSection,props.footerSection]) 
@@ -62,7 +69,8 @@ const Dashboard = (props) => {
             backgroundColor:'#6DB33F',
         },
         container:{
-          backgroundColor:'#E1EFD8'
+          backgroundColor:'#E1EFD8',
+       
         },
         firstTwoCardsStyle:{
           flex:1,
@@ -188,11 +196,20 @@ const Dashboard = (props) => {
     //     },
 
     // ];
-
-    return (
+    const customIndicator = <Image source={loaderImage} style={{height: 50, width: 50,position:'absolute'}}/>
+  
+  return (
        <Container style={styles.container}>
+         
+     
+            <Spinner
+              overlayColor="rgba(0, 0, 0, 0.3)"
+              visible={state.loadingScreen}
+              customIndicator={customIndicator}
+            />
+           
           <Content>
-
+     
               <View style={styles.firstTwoCardsStyle}>
                  <View style={styles.cardSize}>
                      <Card>
@@ -212,7 +229,7 @@ const Dashboard = (props) => {
                       </Card>
                   </View>
                   <View style={styles.cardSize}>
-                          <Card>
+                          <Card>   
                               <CardItem bordered>
                               <Left>
                                   <View style={styles.myButton2}>
@@ -263,68 +280,16 @@ const Dashboard = (props) => {
             </View>
             <View style={styles.thirdCardStyle}>
 
-                  {/* <DeckSwiper
-                        dataSource={cards}
-                        renderItem={item =>
-                          <Card>
-                      <CardItem bordered>
-                        <Left>
-                          <Text>YTD Sales by Sales Channel</Text>
-                        </Left>
-                        <Right>
-                          <Text style={{fontSize:10,color:'#777777'}}>Swipe</Text>
-                        </Right>
-                      </CardItem>
-                      <CardItem bordered >
-                        <View style={{flex:1,flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
-                            
-                            <Icon small type="AntDesign" style={styles.icon} name="left"  />
-                            
-                              <AnimatedCircularProgress
-                                  size={150}
-                                  width={5}
-                                  fill={65}
-                                  backgroundWidth={2}
-                                  backgroundColor="#E1EFD8"
-                                  tintColor="#6DB33F"
-                                  duration={2000}
-                                  onAnimationComplete={() => console.log('onAnimationComplete')}
-                                  rotation={120}
-                            >
-                                  {
-                                    (fill) => (
-                                      <View>
-                                          <H1 style={{fontWeight:'bold'}}>
-                                            {item.text} 
-                                          </H1>
-                                          <Text style={{textAlign:'center',color:'#707070'}}>
-                                            {item.name}
-                                          </Text>
-                                      </View>
-                                      
-                                    )
-                                  }
-                            </AnimatedCircularProgress>  
-                        
-                          <Icon type="AntDesign" style={styles.icon} name="right"  />
-                        </View>
-                      </CardItem>
-                    </Card>
-                        }
-                      /> */}
                       <Card>
                       <CardItem bordered>
                         <Left>
                           <Text>YTD Sales by Sales Channel</Text>
                         </Left>
-                        {/* <Right>
-                          <Text style={{fontSize:10,color:'#777777'}}>Swipe</Text>
-                        </Right> */}
+                       
                       </CardItem>
                       <CardItem bordered >
                         <View style={{flex:1,flexDirection:'row',justifyContent:'center',alignItems:'center'}}>
-                            
-                            {/* <Icon small type="AntDesign" style={styles.icon} name="left"  /> */}
+                      
                             
                               <AnimatedCircularProgress
                                   size={150}
@@ -352,7 +317,6 @@ const Dashboard = (props) => {
                                   }
                             </AnimatedCircularProgress>  
                         
-                          {/* <Icon type="AntDesign" style={styles.icon} name="right"  /> */}
                         </View>
                       </CardItem>
                     </Card>
@@ -399,7 +363,7 @@ const Dashboard = (props) => {
               </View>
 
 
-        </Content>
+        </Content> 
 
       </Container>
     )
