@@ -1,6 +1,6 @@
 import React, {useEffect,useState} from 'react'
 import { View, Text,StyleSheet,StatusBar,Platform,Image } from 'react-native'
-import { Container,H1,Content,H2, Card, CardItem, Icon, Left, Body, Right } from 'native-base';
+import { Container,H1,Content,H2, Card, CardItem, Icon, Left, Body } from 'native-base';
 import { AnimatedCircularProgress } from 'react-native-circular-progress';
 import { connect } from 'react-redux'
 import { getDashboardSats } from '../../redux/actions/dashboardActions'
@@ -16,7 +16,7 @@ const Dashboard = (props) => {
      total_customer:'', 
      channels:'',
      total_products:'',
-     users:'',
+     users:'', 
      attachment:'',
      email_templates:''
    })
@@ -36,7 +36,7 @@ const Dashboard = (props) => {
        {
           console.log('Error Occured: ',props.error)
        }else{
-         console.log(props.middleSection.Domestic)
+         
       
          if(Object.keys(props.upperSection).length)
          {

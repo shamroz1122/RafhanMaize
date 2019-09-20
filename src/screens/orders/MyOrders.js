@@ -1,42 +1,52 @@
 import React,{useState,useEffect} from 'react'
-import {View,Text,StyleSheet,TouchableOpacity} from 'react-native'
+import {View,Text,StyleSheet,TouchableOpacity,Image,RefreshControl} from 'react-native'
 import { Container, Header, Left, Body, Right, Button, Icon,Content,H2,H3,Tab,Tabs,Card, CardItem,Item,Input } from 'native-base';
+import { connect } from 'react-redux'
+import { getAllOrders } from '../../redux/actions/orderActions'
+import Spinner from 'react-native-loading-spinner-overlay';
+import loaderImage from '../../../assets/loader-gif.gif'
+
 function MyOrders(props) {
 
       const [state,setState] = useState({
         searchBar:false,
-        orders: []
+        filtered:[],
+        loadingScreen:true
       })
+      const [refreshing, setRefreshing] = useState(false);
+      const [paging, setPaging] = useState({
+        page:1
+      });
 
-     
-    var allOrders =  [
-      { orderTitle: 'Malik Corporation', orderDetail:'Order #: PK0000517 | Order Date: 2019-08-24 | Delivery Date: 2019-08-28',id:'PK0000517' },
-      { orderTitle: 'Sahara Corporation', orderDetail:'Order #: PK0000518 | Order Date: 2019-08-24 | Delivery Date: 2019-08-28',id:'PK0000518' },
-      { orderTitle: 'Sitara Corporation', orderDetail:'Order #: PK0000519 | Order Date: 2019-08-24 | Delivery Date: 2019-08-28',id:'PK0000519' },
-      { orderTitle: 'Dina Corporation', orderDetail:'Order #: PK0000520 | Order Date: 2019-08-24 | Delivery Date: 2019-08-28',id:'PK0000520' },
-      { orderTitle: 'Lahore Corporation', orderDetail:'Order #: PK0000521 | Order Date: 2019-08-24 | Delivery Date: 2019-08-28',id:'PK0000521' },
-      { orderTitle: 'Ziarat Corporation', orderDetail:'Order #: PK0000522 | Order Date: 2019-08-24 | Delivery Date: 2019-08-28',id:'PK0000522' },
-      { orderTitle: 'Anwar Corporation', orderDetail:'Order #: PK0000523 | Order Date: 2019-08-24 | Delivery Date: 2019-08-28',id:'PK0000523' }
-    ]
-
+  
     useEffect( ()=>{
-    
-        // if(Platform.OS==='android')
-        // {
-        //   StatusBar.setBarStyle( 'light-content',true)
-        //   StatusBar.setBackgroundColor("#60993A")
-    
-        // }
-      
-        setState(
-          (state) =>({ 
-            ...state,
-            orders : allOrders 
-          })
-        )
-
+        props.getAllOrders(paging.page)
 
       },[]) 
+
+      
+      useEffect( ()=>{
+        console.log('hey man')
+        if(props.error)
+        {
+           console.log('Error Occured: ',props.error)
+        }else{
+          //console.log('new products: ',props.products)
+          if(Object.keys(props.orders).length)
+          {
+              setState((state)=>({
+                ...state,
+                filtered: [ ...props.orders,...state.filtered],
+                loadingScreen:false
+              }))
+
+              setRefreshing(false)
+          }
+        }
+    
+       },[props.error,props.orders]) 
+
+
 
       const styles = StyleSheet.create({
 
@@ -64,31 +74,37 @@ function MyOrders(props) {
 
       const onSearch = (text) => {
   
-                var value = text.toLowerCase()
-                var orders = state.orders.filter(order=>{
-                  return order.orderTitle.substring(0, value.length).toLowerCase() === value; 
-                });
-    
-                if(text=='')
-                {
-              
-                  setState(
-                    (state) =>({ 
-                      ...state,
-                      orders : allOrders 
-                    })
-                  )
-                    
-                }else{
-             
-                  setState(
-                    (state) =>({ 
-                      ...state,
-                      orders : orders 
-                    })
-                  )
+              // Variable to hold the original version of the list
+              let currentList = [];
+              // Variable to hold the filtered list before putting into state
+              let newList = [];
+              // If the search bar isn't empty
+              if (text !== "") {
+
+                            currentList = props.orders;
+
+                            newList = currentList.filter(item => {
+                                  
+                            const lc = item.name.toLowerCase();
+                                
+                            const filter = text.toLowerCase();
+                                
+                            return lc.includes(filter);
+                          });
+
+                } else {
+                      // If the search bar is empty, set newList to original task list
+                        newList = props.orders;
                 }
-            
+                  // Set the filtered state based on what our rules added to newList
+                setState(
+                  (state) =>({ 
+                    ...state,
+                    filtered : newList 
+                  })
+                )
+
+
       }
 
 
@@ -100,11 +116,13 @@ function MyOrders(props) {
                               </Item>
                         ):null
 
-        const orders =  state.orders.length > 0 ? (
+             const ordersDelivered =  state.filtered ? (
 
-                              state.orders.map(order => {
+                              state.filtered.map(order => {
+                                if(order.status=='Delivered')
+                                {
                                 return (
-                                         <TouchableOpacity key={order.id} activeOpacity={1} onPress={()=>props.navigation.navigate('OrderDetails',{order:order}) }>
+                                         <TouchableOpacity key={order.order_number} activeOpacity={1} onPress={()=>props.navigation.navigate('OrderDetails',{order:order}) }>
                                             <Card style={styles.card} >
                                                 <CardItem >
                                                   <Left>
@@ -112,17 +130,48 @@ function MyOrders(props) {
                                                       <Icon type="MaterialCommunityIcons" name="shopping" style={{color:'#ffffff'}}/>
                                                     </View>
                                                     <Body>
-                                                      <H3 style={{color:'#6DB33F'}}>{order.orderTitle}</H3>
-                                                      <Text style={{fontSize:10,color:'#838383'}}>{order.orderDetail}</Text>
+                                                      <H3 style={{color:'#6DB33F'}}>{order.name}</H3>
+                                                      <Text style={{fontSize:10,color:'#838383'}}>Order #: {order.order_number} | Order Date: {order.date} | Delivery Date: {order.delivery_date} </Text>
                                                     </Body>
                                                   </Left>
                                                 </CardItem>
                                               </Card>
                                             </TouchableOpacity>
                                         )
+                                }
+
                                     })
 
                           ) : null 
+
+                const ordersPending =  state.filtered ? (
+
+                  state.filtered.map(order => {
+
+                    if(order.status=='Pending')
+                    {
+                    return (
+                              <TouchableOpacity key={order.order_number} activeOpacity={1} onPress={()=>props.navigation.navigate('OrderDetails',{order:order}) }>
+                                <Card style={styles.card} >
+                                    <CardItem >
+                                      <Left>
+                                        <View style={styles.myButton}>
+                                          <Icon type="MaterialCommunityIcons" name="shopping" style={{color:'#ffffff'}}/>
+                                        </View>
+                                        <Body>
+                                          <H3 style={{color:'#6DB33F'}}>{order.name}</H3>
+                                          <Text style={{fontSize:10,color:'#838383'}}>Order #: {order.order_number} | Order Date: {order.date} | Delivery Date: {order.delivery_date} </Text>
+                                        </Body>
+                                      </Left>
+                                    </CardItem>
+                                  </Card>
+                                </TouchableOpacity>
+                            )
+                    }
+
+                        })
+
+              ) : null 
         
       
 
@@ -135,7 +184,19 @@ function MyOrders(props) {
       )
     }
 
-    
+    const onRefresh = React.useCallback(() => {
+      setRefreshing(true);
+      let page_number = paging.page+1
+      let page = {page:page_number}
+      setPaging({page:page_number})
+
+      props.getAllOrders(page)
+      // wait(2500).then(() => setRefreshing(false));
+
+    }, [refreshing]);
+
+    const customIndicator = <Image source={loaderImage} style={{height: 50, width: 50,position:'absolute'}}/>
+  
 
     return (
      <Container style={{backgroundColor:"#DFEED7"}}>
@@ -159,30 +220,56 @@ function MyOrders(props) {
            
           </Right>
         </Header>
-        <Content>
+
+        <Spinner
+              overlayColor="rgba(0, 0, 0, 0.3)"
+              visible={state.loadingScreen}
+              customIndicator={customIndicator}
+            />
+
+        <Content refreshControl={
+              <RefreshControl colors={['#6DB33F']} refreshing={refreshing} onRefresh={onRefresh} tintColor="#6DB33F" />
+            }
+         style={{backgroundColor:"#DFEED7"}}
+         >
         
               {searchBar}
-              <Tabs tabBarUnderlineStyle={{backgroundColor:'#ffffff'}}>
+              <Tabs  tabBarUnderlineStyle={{backgroundColor:'#ffffff'}}>
                
-                <Tab  heading="Delivered" activeTextStyle={{color:"#ffffff"}} activeTabStyle={{backgroundColor:'#60993A'}} tabStyle={{backgroundColor:'#60993A'}} textStyle={{color:'#ffffff'}}>
-                        <View style={styles.cardView}>
-                          {orders}
-                        </View>
+                <Tab heading="Delivered" activeTextStyle={{color:"#ffffff"}} activeTabStyle={{backgroundColor:'#60993A'}} tabStyle={{backgroundColor:'#60993A'}} textStyle={{color:'#ffffff'}}>
+                    
+                        { ordersDelivered ? <View style={styles.cardView} >{ordersDelivered}</View> : null }
+             
                 </Tab>
 
                 <Tab heading="Pending" activeTextStyle={{color:"#ffffff"}} activeTabStyle={{backgroundColor:'#B35644'}}  tabStyle={{backgroundColor:'#B35644'}}  textStyle={{color:'#ffffff'}}>
 
-                   <View style={styles.cardView}>
-                      {orders}
-                   </View>
-                </Tab>
-              </Tabs>
+                    
+                        { ordersPending ? <View style={styles.cardView} >{ordersPending}</View> : null  }
 
-          
+                </Tab>
+                
+              </Tabs>
 
         </Content>
       </Container>
 
     )
 }
-export default  MyOrders;
+
+
+
+const mapStateToProps = (state) => {
+  return {
+    orders: state.order.orders,
+    error: state.order.error,
+  }
+}
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    getAllOrders: (page) => dispatch(getAllOrders(page))
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(MyOrders)

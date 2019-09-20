@@ -1,9 +1,11 @@
 import { combineReducers } from 'redux'
-import orders from './orderReducer'
+import order from './orderReducer'
 import auth from './authReducer'
 import dashboard from './dashboardReducer'
+import product from './productReducer'
 export default combineReducers({
     auth,
-    orders,
-    dashboard
+    order,
+    dashboard,
+    product
 }) 

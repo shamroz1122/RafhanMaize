@@ -1,40 +1,51 @@
 import React,{useState,useEffect} from 'react'
-import {View,Text,StyleSheet,TouchableOpacity} from 'react-native'
+import {View,Text,StyleSheet,TouchableOpacity,Image,RefreshControl} from 'react-native'
 import { Container, Header, Left, Body, Right, Button, Icon,Content,H3,Card, CardItem,Item,Input } from 'native-base';
+import { connect } from 'react-redux'
+import { getAllProducts } from '../../redux/actions/productActions'
+import Spinner from 'react-native-loading-spinner-overlay';
+import loaderImage from '../../../assets/loader-gif.gif'
+
 function MyProducts(props) {
 
       const [state,setState] = useState({
         searchBar:false,
-        products: []
+        filtered:[],
+        loadingScreen:true,
       })
-
-     
-    var allProducts =  [
-      { itemCode: '01180001KY', reference:'01180001KY',itemName:'Rafhan Liquid Glucose 010800 TIN-R25kg',minimumOrderLimit:'01',maximumOrderLimit:'999',id:'01180001KY' },
-      { itemCode: '02001001CM', reference:'02001001CM',itemName:'Cerelose Dextrose Mono-020010',minimumOrderLimit:'01',maximumOrderLimit:'999',id:'02001001CM' },
-      { itemCode: '03003000DK', reference:'03003000DK',itemName:'Rfhan 034010 Maize(Corn) Starch PPW50KG',minimumOrderLimit:'01',maximumOrderLimit:'999',id:'03003000DK' },
-      { itemCode: '05020000DK', reference:'05020000DK',itemName:'Penetrose 20 Maize(Corn)Strach PPW50KG',minimumOrderLimit:'01',maximumOrderLimit:'999',id:'05020000DK' },
-      { itemCode: '13110000DK', reference:'13110000DK',itemName:'Rfhan Maize Gluten Feed 30% AFI PPW50KG',minimumOrderLimit:'01',maximumOrderLimit:'999',id:'13110000DK' },
-    
-    ]
+      const [refreshing, setRefreshing] = useState(false);
+      const [paging, setPaging] = useState({
+        page:1
+      });
 
     useEffect( ()=>{
     
-        // if(Platform.OS==='android')
-        // {
-        //   StatusBar.setBarStyle( 'light-content',true)
-        //   StatusBar.setBackgroundColor("#60993A")
-        // }
-      
-        setState(
-          (state) =>({ 
-            ...state,
-            products : allProducts 
-          })
-        )
-
+       props.getAllProducts(paging.page)
 
       },[]) 
+
+
+      useEffect( ()=>{
+        if(props.error)
+        {
+           console.log('Error Occured: ',props.error)
+        }else{
+          //console.log('new products: ',props.products)
+          if(Object.keys(props.products).length)
+          {
+              setState((state)=>({
+                ...state,
+                filtered: [ ...props.products,...state.filtered],
+                loadingScreen:false
+              })
+              )
+              setRefreshing(false)
+          }
+
+          console.log(state.filtered)
+        }
+    
+       },[props.error,props.products]) 
 
       const styles = StyleSheet.create({
 
@@ -74,31 +85,36 @@ function MyProducts(props) {
 
       const onSearch = (text) => {
   
-                var value = text.toLowerCase()
-                var products = state.products.filter(product=>{
-                  return product.itemName.substring(0, value.length).toLowerCase() === value; 
-                });
-    
-                if(text=='')
-                {
-              
-                  setState(
-                    (state) =>({ 
-                      ...state,
-                      products : allProducts 
-                    })
-                  )
-                    
-                }else{
-             
-                  setState(
-                    (state) =>({ 
-                      ...state,
-                      products : products 
-                    })
-                  )
+               // Variable to hold the original version of the list
+              let currentList = [];
+                  // Variable to hold the filtered list before putting into state
+              let newList = [];
+              // If the search bar isn't empty
+              if (text !== "") {
+      
+                            currentList = props.products;
+
+                            newList = currentList.filter(item => {
+                                   
+                            const lc = item.name.toLowerCase();
+                                
+                            const filter = text.toLowerCase();
+                                
+                            return lc.includes(filter);
+                          });
+
+                } else {
+                       // If the search bar is empty, set newList to original task list
+                        newList = props.products;
                 }
-            
+                  // Set the filtered state based on what our rules added to newList
+                setState(
+                  (state) =>({ 
+                    ...state,
+                    filtered : newList 
+                  })
+                )
+  
       }
 
 
@@ -110,9 +126,9 @@ function MyProducts(props) {
                               </Item>
                         ):null
 
-        const products =  state.products.length > 0 ? (
+        const products =  state.filtered.length > 0 ? (
 
-                              state.products.map(product => {
+                              state.filtered.map(product => {
                                 return (
                                          <TouchableOpacity key={product.id} activeOpacity={1} >
                                           
@@ -121,10 +137,10 @@ function MyProducts(props) {
                                        
                                                 <CardItem  bordered>
                                                   <Left>
-                                                    <Text style={styles.text}>Item Code: <Text style={styles.nestedText}>{product.itemCode}</Text> </Text>
+                                                    <Text style={styles.text}>Item Code: <Text style={styles.nestedText}>{product.code}</Text> </Text>
                                                   </Left>
                                                   <Right>
-                                                    <Text style={styles.text}>Reference: <Text style={styles.nestedText}>{product.reference}</Text> </Text>
+                                                    <Text style={styles.text}>Reference: <Text style={styles.nestedText}>{product.referance}</Text> </Text>
                                                   </Right>
                                               
                                                 </CardItem>
@@ -133,15 +149,15 @@ function MyProducts(props) {
                                                     <Text style={styles.text}>
                                                         Name
                                                     </Text>
-                                                    <Text style={{color:'#90C66E'}}>{product.itemName}</Text>
+                                                    <Text style={{color:'#90C66E'}}>{product.name}</Text>
                                                   </Body>
                                                 </CardItem>
                                                 <CardItem  bordered>
                                                   <Left>
-                                                    <Text style={styles.text}>Minimum Order Limit: <Text style={styles.nestedBottomText}>{product.minimumOrderLimit}</Text> </Text>
+                                                    <Text style={styles.text}>Minimum Order Limit: <Text style={styles.nestedBottomText}>{product.min_order_limit}</Text> </Text>
                                                   </Left>
                                                   <Right>
-                                                    <Text style={styles.text}>Maximum Order Limit: <Text style={styles.nestedBottomText}>{product.maximumOrderLimit}</Text> </Text>
+                                                    <Text style={styles.text}>Maximum Order Limit: <Text style={styles.nestedBottomText}>{product.max_order_limit}</Text> </Text>
                                                   </Right>
                                                 </CardItem>
 
@@ -165,8 +181,20 @@ function MyProducts(props) {
       )
     }
 
-    
 
+    const onRefresh = React.useCallback(() => {
+      setRefreshing(true);
+      let page_number = paging.page+1
+      let page = {page:page_number}
+      setPaging({page:page_number})
+
+      props.getAllProducts(page)
+      // wait(2500).then(() => setRefreshing(false));
+
+    }, [refreshing]);
+    
+    const customIndicator = <Image source={loaderImage} style={{height: 50, width: 50,position:'absolute'}}/>
+  
     return (
      <Container style={{backgroundColor:"#DFEED7"}}>
         <Header androidStatusBarColor="#60993A" style={styles.header}>
@@ -185,7 +213,16 @@ function MyProducts(props) {
       
           </Right>
         </Header>
-        <Content>
+
+           <Spinner
+              overlayColor="rgba(0, 0, 0, 0.3)"
+              visible={state.loadingScreen}
+              customIndicator={customIndicator}
+            />
+
+        <Content  refreshControl={
+          <RefreshControl colors={['#6DB33F']} refreshing={refreshing} onRefresh={onRefresh} tintColor="#6DB33F" />
+        }>
         
               {searchBar}
             
@@ -198,4 +235,23 @@ function MyProducts(props) {
 
     )
 }
-export default  MyProducts;
+
+
+
+
+const mapStateToProps = (state) => {
+  return {
+    products: state.product.products,
+ 
+    error: state.product.error,
+  }
+}
+
+const mapDispatchToProps = (dispatch) => {
+
+  return {
+    getAllProducts: (page) => dispatch(getAllProducts(page))
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(MyProducts)
