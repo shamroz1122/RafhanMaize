@@ -132,7 +132,7 @@ const MyOrdersStack = createStackNavigator({
     //  console.log(navigation.getParam('order'))
         let params =  navigation.getParam('order')
       return {
-        headerTitle: <Text style={{color:"#ffffff",paddingBottom:25,fontSize:22}}>Order #: {params.id}</Text>,
+        headerTitle: <Text style={{color:"#ffffff",paddingBottom:25,fontSize:22}}>Order #: {params.order_number}</Text>,
         headerStyle:{height:30,backgroundColor:'#6DB33F',color:"#ffffff"},
         headerBackImage: Platform.OS === 'android'? <Icon type="AntDesign" style={{fontSize:20,color:'#ffffff',marginBottom:20}} small name="left"  /> :null,
         headerTintColor: '#ffffff',
@@ -174,7 +174,7 @@ const MyCustomersStack = createStackNavigator({
       let params =  navigation.getParam('customer')
 
       return {
-        headerTitle: <Text style={{color:"#ffffff",paddingBottom:25,fontSize:22}}>{params.customerName}</Text>,
+        headerTitle: <Text style={{color:"#ffffff",paddingBottom:25,fontSize:22}}>{params.name}</Text>,
         headerStyle:{height:30,backgroundColor:'#6DB33F',color:"#ffffff"},
         headerBackImage: Platform.OS === 'android'? <Icon type="AntDesign" style={{fontSize:20,color:'#ffffff',marginBottom:20}} small name="left"  /> :null,
         headerTintColor: '#ffffff',

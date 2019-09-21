@@ -1,41 +1,70 @@
 import React,{useState,useEffect} from 'react'
-import {View,Text,Platform,StyleSheet,TouchableOpacity} from 'react-native'
+import {View,Text,Platform,StyleSheet,TouchableOpacity,Image,RefreshControl} from 'react-native'
 import { Container, Header, Left, Body, Right, Button, Icon,Content,H3,Card, CardItem,Item,Input } from 'native-base';
+import { connect } from 'react-redux'
+import { getAllCustomers } from '../../redux/actions/customerActions'
+import Spinner from 'react-native-loading-spinner-overlay';
+import loaderImage from '../../../assets/loader-gif.gif'
+
+
 function MyCustomers(props) {
 
       const [state,setState] = useState({
         searchBar:false,
-        customers: []
+        filtered: [],
+        loadingScreen:true
       })
+      const [refreshing, setRefreshing] = useState(false);
+      const [paging, setPaging] = useState({
+        page:1
+      });
+
 
      
-    var allCustomers =  [
-      { customerName: 'Malik Corporation',customerAddress:'Street Address: None | City: None', id:'PK0000517',code:'12001048' },
-      { customerName: 'Sahara Corporation',customerAddress:'Street Address: None | City: None',id:'PK0000518',code:'12001048' },
-      { customerName: 'Sitara Corporation',customerAddress:'Street Address: None | City: None',id:'PK0000519',code:'12001048' },
-      { customerName: 'Dina Corporation',customerAddress:'Street Address: None | City: None',id:'PK0000520',code:'12001048' },
-      { customerName: 'Lahore Corporation',customerAddress:'Street Address: None | City: None',id:'PK0000521',code:'12001048' },
-      { customerName: 'Ziarat Corporation',customerAddress:'Street Address: None | City: None',id:'PK0000522',code:'12001048' },
-      { customerName: 'Anwar Corporation',customerAddress:'Street Address: None | City: None',id:'PK0000523',code:'12001048' }
-    ]
+    // var allCustomers =  [
+    //   { customerName: 'Malik Corporation',customerAddress:'Street Address: None | City: None', id:'PK0000517',code:'12001048' },
+    //   { customerName: 'Sahara Corporation',customerAddress:'Street Address: None | City: None',id:'PK0000518',code:'12001048' },
+    //   { customerName: 'Sitara Corporation',customerAddress:'Street Address: None | City: None',id:'PK0000519',code:'12001048' },
+    //   { customerName: 'Dina Corporation',customerAddress:'Street Address: None | City: None',id:'PK0000520',code:'12001048' },
+    //   { customerName: 'Lahore Corporation',customerAddress:'Street Address: None | City: None',id:'PK0000521',code:'12001048' },
+    //   { customerName: 'Ziarat Corporation',customerAddress:'Street Address: None | City: None',id:'PK0000522',code:'12001048' },
+    //   { customerName: 'Anwar Corporation',customerAddress:'Street Address: None | City: None',id:'PK0000523',code:'12001048' }
+    // ]
 
-    useEffect( ()=>{
-    
-        // if(Platform.OS==='android')
-        // {
-        //   StatusBar.setBarStyle( 'light-content',true)
-        //   StatusBar.setBackgroundColor("#60993A")
-        // }
-      
-        setState(
-          (state) =>({ 
-            ...state,
-            customers : allCustomers 
-          })
-        )
 
+
+      useEffect( ()=>{
+
+        props.getAllCustomers(paging.page)
 
       },[]) 
+
+      
+      useEffect( ()=>{
+  
+        if(props.error)
+        {
+           console.log('Error Occured: ',props.error)
+        }else{
+          //console.log('new products: ',props.products)
+          if(Object.keys(props.customers).length)
+          {
+              setState((state)=>({
+                ...state,
+                filtered: [ ...props.customers,...state.filtered],
+                loadingScreen:false
+              }))
+
+          
+          }
+          setRefreshing(false)
+        }
+    
+       },[props.error,props.customers]) 
+
+
+
+
 
       const styles = StyleSheet.create({
 
@@ -62,31 +91,40 @@ function MyCustomers(props) {
       })
 
       const onSearch = (text) => {
-  
-                var value = text.toLowerCase()
-                var customers = state.customers.filter(customer=>{
-                  return customer.customerName.substring(0, value.length).toLowerCase() === value; 
-                });
-    
-                if(text=='')
-                {
-              
-                  setState(
-                    (state) =>({ 
-                      ...state,
-                      customers : allCustomers 
-                    })
-                  )
-                    
-                }else{
-             
-                  setState(
-                    (state) =>({ 
-                      ...state,
-                      customers : customers 
-                    })
-                  )
-                }
+
+                    // Variable to hold the original version of the list
+                    let currentList = [];
+                    // Variable to hold the filtered list before putting into state
+                    let newList = [];
+                    // If the search bar isn't empty
+                    if (text !== "") {
+
+                                  currentList = props.customers;
+
+                                  newList = currentList.filter(item => {
+                                        
+                                  const lc = item.name.toLowerCase();
+                                      
+                                  const filter = text.toLowerCase();
+                                      
+                                  return lc.includes(filter);
+                                });
+
+                      } else {
+                            // If the search bar is empty, set newList to original task list
+                              newList = props.customers;
+                      }
+                        // Set the filtered state based on what our rules added to newList
+                      setState(
+                        (state) =>({ 
+                          ...state,
+                          filtered : newList 
+                        })
+                      )
+
+
+
+
             
       }
 
@@ -99,11 +137,11 @@ function MyCustomers(props) {
                               </Item>
                         ):null
 
-        const customers =  state.customers.length > 0 ? (
+        const customers =  state.filtered.length > 0 ? (
 
-                              state.customers.map(customer => {
+                              state.filtered.map(customer => {
                                 return (
-                                         <TouchableOpacity key={customer.id} activeOpacity={1} onPress={()=>props.navigation.navigate('Corporation',{customer:customer}) }>
+                                         <TouchableOpacity key={customer.code} activeOpacity={1} onPress={()=>props.navigation.navigate('Corporation',{customer:customer}) }>
                                             <Card style={styles.card} >
                                                 <CardItem style={{paddingTop:0,paddingBottom:0,paddingLeft:0,paddingRight:0}}>
 
@@ -115,8 +153,8 @@ function MyCustomers(props) {
                                                             </View>
                                                             <Body>
                                                               <Text style={{fontSize:10,color:'#838383'}}>Code {customer.code}</Text>
-                                                              <H3 style={{color:'#6DB33F'}}>{customer.customerName}</H3>
-                                                              <Text style={{fontSize:10,color:'#838383'}}>{customer.customerAddress}</Text>
+                                                              <Text style={{color:'#6DB33F'}}>{customer.name}</Text>
+                                                              <Text style={{fontSize:10,color:'#838383'}}>Street Address: { customer.street!=''?customer.street:'None' } | City: { customer.street!=''?customer.city:'None' }</Text>
                                                             </Body>
                                                           </Left>
                                                       </View>
@@ -157,6 +195,19 @@ function MyCustomers(props) {
     }
 
 
+    const onRefresh = React.useCallback(() => {
+      setRefreshing(true);
+      let page_number = paging.page+1
+      let page = {page:page_number}
+      setPaging({page:page_number})
+
+      props.getAllCustomers(page)
+      // wait(2500).then(() => setRefreshing(false));
+
+    }, [refreshing]);
+
+    const customIndicator = <Image source={loaderImage} style={{height: 50, width: 50,position:'absolute'}}/>
+
     return (
      <Container style={{backgroundColor:"#DFEED7"}}>
         <Header androidStatusBarColor="#60993A" style={styles.header}>
@@ -174,8 +225,15 @@ function MyCustomers(props) {
             </Button>
           </Right>
         </Header>
-        <Content>
-        
+        <Content refreshControl={
+              <RefreshControl colors={['#6DB33F']} refreshing={refreshing} onRefresh={onRefresh} tintColor="#6DB33F" />
+            }>
+        <Spinner
+              overlayColor="rgba(0, 0, 0, 0.3)"
+              visible={state.loadingScreen}
+              customIndicator={customIndicator}
+            />
+
               {searchBar}
       
               <View style={styles.cardView}>
@@ -190,4 +248,21 @@ function MyCustomers(props) {
 
     )
 }
-export default  MyCustomers;
+
+
+
+
+const mapStateToProps = (state) => {
+  return {
+    customers: state.customer.customers,
+    error: state.customer.error,
+  }
+}
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    getAllCustomers: (page) => dispatch(getAllCustomers(page))
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(MyCustomers)

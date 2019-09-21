@@ -39,10 +39,10 @@ function MyProducts(props) {
                 loadingScreen:false
               })
               )
-              setRefreshing(false)
+            
           }
-
-          console.log(state.filtered)
+          setRefreshing(false)
+    
         }
     
        },[props.error,props.products]) 

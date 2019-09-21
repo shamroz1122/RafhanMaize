@@ -7,7 +7,7 @@ export const getAllProducts = data => dispatch => {
     .then((res) => {
           
 
-        console.log("my products",res.data.products)
+  
                 if(res.data.success==false)
                 {
                     dispatch({type: 'GET_PRODUCTS_ERROR',msg:res.data.message})

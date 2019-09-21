@@ -26,7 +26,7 @@ function MyOrders(props) {
 
       
       useEffect( ()=>{
-        console.log('hey man')
+
         if(props.error)
         {
            console.log('Error Occured: ',props.error)
@@ -40,8 +40,8 @@ function MyOrders(props) {
                 loadingScreen:false
               }))
 
-              setRefreshing(false)
           }
+          setRefreshing(false)
         }
     
        },[props.error,props.orders]) 
@@ -142,6 +142,7 @@ function MyOrders(props) {
 
                                     })
 
+                                    
                           ) : null 
 
                 const ordersPending =  state.filtered ? (
@@ -167,6 +168,8 @@ function MyOrders(props) {
                                   </Card>
                                 </TouchableOpacity>
                             )
+                    }else{
+                      return null
                     }
 
                         })
@@ -239,13 +242,13 @@ function MyOrders(props) {
                 <Tab heading="Delivered" activeTextStyle={{color:"#ffffff"}} activeTabStyle={{backgroundColor:'#60993A'}} tabStyle={{backgroundColor:'#60993A'}} textStyle={{color:'#ffffff'}}>
                     
                         { ordersDelivered ? <View style={styles.cardView} >{ordersDelivered}</View> : null }
-             
+                      
                 </Tab>
 
                 <Tab heading="Pending" activeTextStyle={{color:"#ffffff"}} activeTabStyle={{backgroundColor:'#B35644'}}  tabStyle={{backgroundColor:'#B35644'}}  textStyle={{color:'#ffffff'}}>
 
                     
-                        { ordersPending ? <View style={styles.cardView} >{ordersPending}</View> : null  }
+                         { ordersDelivered ? <View style={styles.cardView} >{ordersDelivered}</View> : null }
 
                 </Tab>
                 
