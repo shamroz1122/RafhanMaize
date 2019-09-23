@@ -1,24 +1,33 @@
 const initState = {
   error:null,
-  orders:{},
+  pendingOrders:{},
+  deliveredOrders:{},
 }
 
 const orderReducer = (state = initState, action) => {
   switch(action.type){
   
-    case 'GET_ORDERS_SUCCESS':
+    case 'GET_PENDING_ORDERS_SUCCESS':
       return {
         ...state,
         error:null,
-        orders:action.orders
+        pendingOrders:action.pendingOrders,
       }
-      case 'GET_ORDERS_ERROR':
-      return {
-        ...state,
-        error:action.msg,
-        orders:{}
-  
-      }
+
+      case 'GET_DELIVERED_ORDERS_SUCCESS':
+        return {
+          ...state,
+          error:null,
+          deliveredOrders:action.deliveredOrders,
+        }
+        case 'GET_ORDERS_ERROR':
+        return {
+          ...state,
+          error:action.msg,
+          deliveredOrders:{},
+          pendingOrders:{}
+    
+        }
       default:
         return state
   } 

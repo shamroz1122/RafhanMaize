@@ -2,7 +2,8 @@ import React,{useState,useEffect} from 'react'
 import {View,Text,StyleSheet,TouchableOpacity,Image,RefreshControl} from 'react-native'
 import { Container, Header, Left, Body, Right, Button, Icon,Content,H2,H3,Tab,Tabs,Card, CardItem,Item,Input } from 'native-base';
 import { connect } from 'react-redux'
-import { getAllOrders } from '../../redux/actions/orderActions'
+import { getDeliveredOrders } from '../../redux/actions/orderActions'
+import { getPendingOrders } from '../../redux/actions/orderActions'
 import Spinner from 'react-native-loading-spinner-overlay';
 import loaderImage from '../../../assets/loader-gif.gif'
 
@@ -10,17 +11,26 @@ function MyOrders(props) {
 
       const [state,setState] = useState({
         searchBar:false,
-        filtered:[],
+        pendingfiltered:[],
+        deliveredfiltered:[],
         loadingScreen:true
       })
       const [refreshing, setRefreshing] = useState(false);
-      const [paging, setPaging] = useState({
+      const [loadingScreen, setloadingScreen] = useState(true);
+      const [pendingPaging, setPendingPaging] = useState({
+        status:'submmit',
+        page:1
+      });
+      const [deliveredPaging, setDeliveredPaging] = useState({
+        status:'delivered',
         page:1
       });
 
   
     useEffect( ()=>{
-        props.getAllOrders(paging.page)
+
+        props.getDeliveredOrders(deliveredPaging)
+        props.getPendingOrders(pendingPaging)
 
       },[]) 
 
@@ -32,19 +42,35 @@ function MyOrders(props) {
            console.log('Error Occured: ',props.error)
         }else{
           //console.log('new products: ',props.products)
-          if(Object.keys(props.orders).length)
+          if(Object.keys(props.deliveredOrders).length)
           {
+            console.log("delivered: ",props.deliveredOrders )
               setState((state)=>({
                 ...state,
-                filtered: [ ...props.orders,...state.filtered],
+                deliveredfiltered: [...props.deliveredOrders,...state.deliveredfiltered],
                 loadingScreen:false
               }))
 
           }
+
+          if(Object.keys(props.pendingOrders).length)
+          {
+
+            console.log("pending: ",props.pendingOrders )
+
+              setState((state)=>({
+                ...state,
+                pendingfiltered: [...props.pendingOrders,...state.pendingfiltered],
+                loadingScreen:false
+              }))
+
+          }
+
+       
           setRefreshing(false)
         }
     
-       },[props.error,props.orders]) 
+       },[props.error,props.pendingOrders,props.deliveredOrders]) 
 
 
 
@@ -81,7 +107,7 @@ function MyOrders(props) {
               // If the search bar isn't empty
               if (text !== "") {
 
-                            currentList = props.orders;
+                            currentList = props.pendingOrders;
 
                             newList = currentList.filter(item => {
                                   
@@ -94,7 +120,7 @@ function MyOrders(props) {
 
                 } else {
                       // If the search bar is empty, set newList to original task list
-                        newList = props.orders;
+                        newList = props.pendingOrders;
                 }
                   // Set the filtered state based on what our rules added to newList
                 setState(
@@ -116,13 +142,12 @@ function MyOrders(props) {
                               </Item>
                         ):null
 
-             const ordersDelivered =  state.filtered ? (
+             const ordersDelivered =  state.deliveredfiltered ? (
 
-                              state.filtered.map(order => {
-                                if(order.status=='Delivered')
-                                {
+                                state.deliveredfiltered.map(order => {
+                                
                                 return (
-                                         <TouchableOpacity key={order.order_number} activeOpacity={1} onPress={()=>props.navigation.navigate('OrderDetails',{order:order}) }>
+                                         <TouchableOpacity key={order.id} activeOpacity={1} onPress={()=>props.navigation.navigate('OrderDetails',{order:order}) }>
                                             <Card style={styles.card} >
                                                 <CardItem >
                                                   <Left>
@@ -138,21 +163,19 @@ function MyOrders(props) {
                                               </Card>
                                             </TouchableOpacity>
                                         )
-                                }
+                                  
 
                                     })
 
                                     
                           ) : null 
 
-                const ordersPending =  state.filtered ? (
+                const ordersPending =  state.pendingfiltered ? (
 
-                  state.filtered.map(order => {
+                  state.pendingfiltered.map(order => {
 
-                    if(order.status=='Pending')
-                    {
                     return (
-                              <TouchableOpacity key={order.order_number} activeOpacity={1} onPress={()=>props.navigation.navigate('OrderDetails',{order:order}) }>
+                              <TouchableOpacity key={order.id} activeOpacity={1} onPress={()=>props.navigation.navigate('OrderDetails',{order:order}) }>
                                 <Card style={styles.card} >
                                     <CardItem >
                                       <Left>
@@ -168,9 +191,7 @@ function MyOrders(props) {
                                   </Card>
                                 </TouchableOpacity>
                             )
-                    }else{
-                      return null
-                    }
+                  
 
                         })
 
@@ -189,11 +210,10 @@ function MyOrders(props) {
 
     const onRefresh = React.useCallback(() => {
       setRefreshing(true);
-      let page_number = paging.page+1
-      let page = {page:page_number}
-      setPaging({page:page_number})
-
-      props.getAllOrders(page)
+      let page_number = pendingPaging.page+1
+      let page = {status:'submit',page:page_number}
+      setPendingPaging({status:'submit',page:page_number})
+      props.getPendingOrders(page)
       // wait(2500).then(() => setRefreshing(false));
 
     }, [refreshing]);
@@ -248,7 +268,7 @@ function MyOrders(props) {
                 <Tab heading="Pending" activeTextStyle={{color:"#ffffff"}} activeTabStyle={{backgroundColor:'#B35644'}}  tabStyle={{backgroundColor:'#B35644'}}  textStyle={{color:'#ffffff'}}>
 
                     
-                         { ordersDelivered ? <View style={styles.cardView} >{ordersDelivered}</View> : null }
+                         { ordersPending ? <View style={styles.cardView} >{ordersPending}</View> : null }
 
                 </Tab>
                 
@@ -264,14 +284,16 @@ function MyOrders(props) {
 
 const mapStateToProps = (state) => {
   return {
-    orders: state.order.orders,
+    deliveredOrders: state.order.deliveredOrders,
+    pendingOrders: state.order.pendingOrders,
     error: state.order.error,
   }
 }
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    getAllOrders: (page) => dispatch(getAllOrders(page))
+    getDeliveredOrders: (page) => dispatch(getDeliveredOrders(page)),
+    getPendingOrders: (page) => dispatch(getPendingOrders(page))
   }
 }
 

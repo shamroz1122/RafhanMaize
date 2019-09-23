@@ -1,18 +1,21 @@
 import React,{useState,useEffect} from 'react'
-import {View,Text,Platform,StyleSheet,TouchableOpacity,Image,RefreshControl} from 'react-native'
+import {View,Text,Platform,StyleSheet,TouchableOpacity,Image,RefreshControl,TouchableHighlight,Modal} from 'react-native'
 import { Container, Header, Left, Body, Right, Button, Icon,Content,H3,Card, CardItem,Item,Input } from 'native-base';
 import { connect } from 'react-redux'
 import { getAllCustomers } from '../../redux/actions/customerActions'
+import { searchCustomer } from '../../redux/actions/customerActions'
 import Spinner from 'react-native-loading-spinner-overlay';
 import loaderImage from '../../../assets/loader-gif.gif'
-
 
 function MyCustomers(props) {
 
       const [state,setState] = useState({
         searchBar:false,
         filtered: [],
-        loadingScreen:true
+        loadingScreen:true,
+        modalVisible: false,
+        searchFromDB:'',
+        isSearch:false
       })
       const [refreshing, setRefreshing] = useState(false);
       const [paging, setPaging] = useState({
@@ -20,7 +23,6 @@ function MyCustomers(props) {
       });
 
 
-     
     // var allCustomers =  [
     //   { customerName: 'Malik Corporation',customerAddress:'Street Address: None | City: None', id:'PK0000517',code:'12001048' },
     //   { customerName: 'Sahara Corporation',customerAddress:'Street Address: None | City: None',id:'PK0000518',code:'12001048' },
@@ -47,20 +49,36 @@ function MyCustomers(props) {
            console.log('Error Occured: ',props.error)
         }else{
           //console.log('new products: ',props.products)
+        
+
           if(Object.keys(props.customers).length)
           {
-              setState((state)=>({
-                ...state,
-                filtered: [ ...props.customers,...state.filtered],
-                loadingScreen:false
-              }))
-
+            
+                  //  console.log("orderfilter: ",state.filtered)
+                  if(props.isSearch)
+                  {
+                    setState((state)=>({
+                      ...state,
+                      filtered: props.customers,
+                      loadingScreen:false,
+                      isSearch:true
+                    }))
+                  }else{
+                    setState((state)=>({
+                      ...state,
+                      filtered: [...props.customers,...state.filtered],
+                      loadingScreen:false,
+                      isSearch:false
+                    }))
+                  }
+             
+                  
           
           }
           setRefreshing(false)
         }
     
-       },[props.error,props.customers]) 
+       },[props.error,props.customers,props.isSearch]) 
 
 
 
@@ -97,9 +115,14 @@ function MyCustomers(props) {
                     // Variable to hold the filtered list before putting into state
                     let newList = [];
                     // If the search bar isn't empty
+
+                  
+
                     if (text !== "") {
 
+                             
                                   currentList = props.customers;
+                                
 
                                   newList = currentList.filter(item => {
                                         
@@ -111,6 +134,8 @@ function MyCustomers(props) {
                                 });
 
                       } else {
+                        
+                       
                             // If the search bar is empty, set newList to original task list
                               newList = props.customers;
                       }
@@ -122,18 +147,25 @@ function MyCustomers(props) {
                         })
                       )
 
-
-
-
             
       }
 
+      const setModalVisible = (visible) => {
+        setState({...state,modalVisible: visible});
+      }
 
        const searchBar = state.searchBar==true? 
                         (
                               <Item>
                                 <Input type="text" id="search" onChangeText={onSearch}  placeholder="Search" />
-                                <Icon type="FontAwesome" name="user-circle" /> 
+                                <TouchableHighlight
+                                  onPress={() => {
+                                      setModalVisible(true);
+                                  }}>
+                                  <Icon type="FontAwesome" name="search-plus" />
+                                </TouchableHighlight>
+                            
+                               
                               </Item>
                         ):null
 
@@ -141,7 +173,7 @@ function MyCustomers(props) {
 
                               state.filtered.map(customer => {
                                 return (
-                                         <TouchableOpacity key={customer.code} activeOpacity={1} onPress={()=>props.navigation.navigate('Corporation',{customer:customer}) }>
+                                         <TouchableOpacity key={customer.id} activeOpacity={1} onPress={()=>props.navigation.navigate('Corporation',{customer:customer}) }>
                                             <Card style={styles.card} >
                                                 <CardItem style={{paddingTop:0,paddingBottom:0,paddingLeft:0,paddingRight:0}}>
 
@@ -176,7 +208,7 @@ function MyCustomers(props) {
                                         )
                                     })
 
-                          ) : null 
+                          ) : <Text style={{textAlign:'center'}}>Opps! No Result Found</Text> 
         
     const changeSearchBar = (e) => {
    //   alert('hello')
@@ -187,6 +219,28 @@ function MyCustomers(props) {
       )
     }
 
+    const onSearchFromDB = (text) => {
+      //   alert('hello')
+         setState((state)=>({
+           ...state,
+           searchFromDB:text
+         })
+         )
+       }
+  
+       const searchFromDatabase = () => {
+             setModalVisible(false)
+          
+             setState((state)=>({
+              ...state,
+              loadingScreen:true
+            }))
+
+            let search = {'search':state.searchFromDB}
+            props.searchCustomer(search)
+       }
+  
+
     if(Platform.OS==='android')
     {
       var mycustomerTitle = <H3 style={{color:'#ffffff'}}>My Customers</H3>
@@ -196,15 +250,27 @@ function MyCustomers(props) {
 
 
     const onRefresh = React.useCallback(() => {
-      setRefreshing(true);
-      let page_number = paging.page+1
-      let page = {page:page_number}
-      setPaging({page:page_number})
-
-      props.getAllCustomers(page)
-      // wait(2500).then(() => setRefreshing(false));
-
+            setRefreshing(true);
+            let page_number = paging.page+1
+            let page = {page:page_number}
+            setPaging({page:page_number})
+            props.getAllCustomers(page)
+          
     }, [refreshing]);
+
+    const newRefresh =  React.useCallback(() => {
+         setRefreshing(true);
+          setState(
+            (state) =>({ 
+              ...state,
+              filtered : [] 
+            })
+          )
+         let page = {page:1}
+         setPaging(page)
+         props.getAllCustomers(page)
+
+ }, [refreshing]);
 
     const customIndicator = <Image source={loaderImage} style={{height: 50, width: 50,position:'absolute'}}/>
 
@@ -225,9 +291,40 @@ function MyCustomers(props) {
             </Button>
           </Right>
         </Header>
+        
+        <Modal
+          animationType="slide"
+          transparent={false}
+          visible={state.modalVisible}
+          onRequestClose={() => {
+            setModalVisible(!state.modalVisible);
+          }}>
+
+
+          <View style={{flex:1,alignItems:'center',justifyContent:'center',backgroundColor:'#DFEED7',padding:15}}>
+
+               
+                        <H3>Search Any Customer From Database</H3>
+
+                        <Item>
+                                <Input type="text" id="search" onChangeText={onSearchFromDB}  />
+                                <TouchableHighlight
+                                  onPress={() => {
+                                      searchFromDatabase();
+                                  }}>
+                                  <Icon type="FontAwesome" name="search" />
+                                </TouchableHighlight>
+                         </Item>
+                
+
+          </View>
+        </Modal>
         <Content refreshControl={
-              <RefreshControl colors={['#6DB33F']} refreshing={refreshing} onRefresh={onRefresh} tintColor="#6DB33F" />
+              <RefreshControl colors={['#6DB33F']} refreshing={refreshing} onRefresh={state.isSearch?newRefresh:onRefresh} tintColor="#6DB33F" />
             }>
+
+        
+            
         <Spinner
               overlayColor="rgba(0, 0, 0, 0.3)"
               visible={state.loadingScreen}
@@ -240,9 +337,6 @@ function MyCustomers(props) {
                 {customers}
               </View>
            
-
-          
-
         </Content>
       </Container>
 
@@ -256,12 +350,14 @@ const mapStateToProps = (state) => {
   return {
     customers: state.customer.customers,
     error: state.customer.error,
+    isSearch:state.customer.isSearch
   }
 }
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    getAllCustomers: (page) => dispatch(getAllCustomers(page))
+    getAllCustomers: (page) => dispatch(getAllCustomers(page)),
+    searchCustomer: (search) => dispatch(searchCustomer(search))
   }
 }
 
