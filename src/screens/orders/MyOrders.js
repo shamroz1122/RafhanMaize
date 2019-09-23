@@ -13,14 +13,16 @@ function MyOrders(props) {
         searchBar:false,
         pendingfiltered:[],
         deliveredfiltered:[],
-        loadingScreen:true
+        loadingScreen:true,
+        tab:false
       })
       const [refreshing, setRefreshing] = useState(false);
-      const [loadingScreen, setloadingScreen] = useState(true);
+
       const [pendingPaging, setPendingPaging] = useState({
-        status:'submmit',
+        status:'submit',
         page:1
       });
+
       const [deliveredPaging, setDeliveredPaging] = useState({
         status:'delivered',
         page:1
@@ -31,7 +33,6 @@ function MyOrders(props) {
 
         props.getDeliveredOrders(deliveredPaging)
         props.getPendingOrders(pendingPaging)
-
       },[]) 
 
       
@@ -41,23 +42,35 @@ function MyOrders(props) {
         {
            console.log('Error Occured: ',props.error)
         }else{
-          //console.log('new products: ',props.products)
+        
           if(Object.keys(props.deliveredOrders).length)
           {
-            console.log("delivered: ",props.deliveredOrders )
+           
               setState((state)=>({
                 ...state,
                 deliveredfiltered: [...props.deliveredOrders,...state.deliveredfiltered],
                 loadingScreen:false
               }))
-
+           
           }
 
+       
+          setRefreshing(false)
+        }
+    
+       },[props.error,props.deliveredOrders]) 
+
+
+       useEffect( ()=>{
+
+        if(props.error)
+        {
+           console.log('Error Occured: ',props.error)
+        }else{
+          //console.log('new products: ',props.products)
+       
           if(Object.keys(props.pendingOrders).length)
           {
-
-            console.log("pending: ",props.pendingOrders )
-
               setState((state)=>({
                 ...state,
                 pendingfiltered: [...props.pendingOrders,...state.pendingfiltered],
@@ -65,13 +78,10 @@ function MyOrders(props) {
               }))
 
           }
-
-       
           setRefreshing(false)
         }
     
-       },[props.error,props.pendingOrders,props.deliveredOrders]) 
-
+       },[props.error,props.pendingOrders]) 
 
 
       const styles = StyleSheet.create({
@@ -100,6 +110,7 @@ function MyOrders(props) {
 
       const onSearch = (text) => {
   
+     
               // Variable to hold the original version of the list
               let currentList = [];
               // Variable to hold the filtered list before putting into state
@@ -107,7 +118,13 @@ function MyOrders(props) {
               // If the search bar isn't empty
               if (text !== "") {
 
-                            currentList = props.pendingOrders;
+                            if(state.tab)
+                            {
+                              currentList = props.pendingOrders;
+                            }else{
+                              currentList = props.deliveredOrders;
+                            }
+                        
 
                             newList = currentList.filter(item => {
                                   
@@ -120,17 +137,33 @@ function MyOrders(props) {
 
                 } else {
                       // If the search bar is empty, set newList to original task list
+                      if(state.tab)
+                      {
                         newList = props.pendingOrders;
+                      }else{
+                        newList = props.deliveredOrders;
+                      }
+                    
                 }
                   // Set the filtered state based on what our rules added to newList
-                setState(
-                  (state) =>({ 
-                    ...state,
-                    filtered : newList 
-                  })
-                )
 
-
+                  if(state.tab)
+                  {
+                    setState(
+                      (state) =>({ 
+                        ...state,
+                        pendingfiltered : newList 
+                      })
+                    )
+                  }else{
+                    setState(
+                      (state) =>({ 
+                        ...state,
+                        deliveredfiltered : newList 
+                      })
+                    )
+                  }
+          
       }
 
 
@@ -198,7 +231,7 @@ function MyOrders(props) {
               ) : null 
         
       
-
+          
     const changeSearchBar = (e) => {
    //   alert('hello')
       setState((state)=>({
@@ -208,7 +241,10 @@ function MyOrders(props) {
       )
     }
 
-    const onRefresh = React.useCallback(() => {
+ 
+
+    const onRefreshPending = React.useCallback(() => {
+    
       setRefreshing(true);
       let page_number = pendingPaging.page+1
       let page = {status:'submit',page:page_number}
@@ -218,13 +254,34 @@ function MyOrders(props) {
 
     }, [refreshing]);
 
+    
+    const onRefreshDelivered = React.useCallback(() => {
+   
+      setRefreshing(true);
+      let page_number = deliveredPaging.page+1
+      let page = {status:'delivered',page:page_number}
+      setDeliveredPaging({status:'delivered',page:page_number})
+      props.getDeliveredOrders(page)
+      // wait(2500).then(() => setRefreshing(false));
+
+    }, [refreshing]);
+
+
+    const onChangeTab = () => {
+      setState((state)=>({
+        ...state,
+        tab:!state.tab
+      })
+      )
+    }
+
     const customIndicator = <Image source={loaderImage} style={{height: 50, width: 50,position:'absolute'}}/>
   
 
     return (
      <Container style={{backgroundColor:"#DFEED7"}}>
     
-        <Header androidStatusBarColor="#60993A" style={styles.header}>
+        <Header hasTabs androidStatusBarColor="#60993A" style={styles.header}>
           <Left>
             <Button onPress={()=>props.navigation.navigate('Dashboard') } transparent>
                <Icon  type="AntDesign" style={{fontSize:20,color:'#ffffff'}} small name="left"  />
@@ -251,13 +308,13 @@ function MyOrders(props) {
             />
 
         <Content refreshControl={
-              <RefreshControl colors={['#6DB33F']} refreshing={refreshing} onRefresh={onRefresh} tintColor="#6DB33F" />
-            }
-         style={{backgroundColor:"#DFEED7"}}
+                    <RefreshControl colors={['#6DB33F']} refreshing={refreshing} onRefresh={state.tab?onRefreshPending:onRefreshDelivered} tintColor="#6DB33F" />
+                  } 
+                style={{backgroundColor:"#DFEED7"}}
          >
         
               {searchBar}
-              <Tabs  tabBarUnderlineStyle={{backgroundColor:'#ffffff'}}>
+              <Tabs onChangeTab={onChangeTab} tabBarUnderlineStyle={{backgroundColor:'#ffffff'}}>
                
                 <Tab heading="Delivered" activeTextStyle={{color:"#ffffff"}} activeTabStyle={{backgroundColor:'#60993A'}} tabStyle={{backgroundColor:'#60993A'}} textStyle={{color:'#ffffff'}}>
                     
@@ -267,8 +324,7 @@ function MyOrders(props) {
 
                 <Tab heading="Pending" activeTextStyle={{color:"#ffffff"}} activeTabStyle={{backgroundColor:'#B35644'}}  tabStyle={{backgroundColor:'#B35644'}}  textStyle={{color:'#ffffff'}}>
 
-                    
-                         { ordersPending ? <View style={styles.cardView} >{ordersPending}</View> : null }
+                        { ordersPending ? <View style={styles.cardView} >{ordersPending}</View> : null }
 
                 </Tab>
                 

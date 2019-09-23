@@ -56,10 +56,10 @@ class AuthLoadingScreen extends React.Component {
     const customIndicator = <Image source={loaderImage} style={{height: 50, width: 50,position:'absolute'}}/>
     return (
       <View style={{flex:1,justifyContent:'center',alignItems:'center'}}>
-        <Spinner
+        {/* <Spinner
           visible={this.state.isReady}
           customIndicator={customIndicator}
-        />
+        /> */}
         <StatusBar barStyle="default" />
       </View>
     );

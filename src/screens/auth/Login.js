@@ -122,7 +122,7 @@ function Login(props){
                                 </View>
                            
                              
-                                <KeyboardAvoidingView   behavior= {(Platform.OS === 'ios')? "padding" : null} style={styles.formFlex}>
+                                <KeyboardAvoidingView  keyboardVerticalOffset={Platform.select({ios: 0, android: -500})}  behavior= {(Platform.OS === 'ios')? "padding" : "position"} style={styles.formFlex}>
 
                                     <Item >
                                         <Icon android="md-mail" ios="ios-mail"/>
