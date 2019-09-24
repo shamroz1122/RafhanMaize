@@ -12,6 +12,7 @@ function MyCustomers(props) {
       const [state,setState] = useState({
         searchBar:false,
         filtered: [],
+        customers:[],
         loadingScreen:true,
         modalVisible: false,
         searchFromDB:'',
@@ -67,6 +68,7 @@ function MyCustomers(props) {
                     setState((state)=>({
                       ...state,
                       filtered: [...props.customers,...state.filtered],
+                      customers:[...props.customers,...state.customers],
                       loadingScreen:false,
                       isSearch:false
                     }))
@@ -74,6 +76,19 @@ function MyCustomers(props) {
              
                   
           
+          }else{
+
+            if(props.isSearch)
+            {
+              setState((state)=>({
+                ...state,
+                filtered: [],
+                loadingScreen:false,
+                isSearch:true
+              }))
+              
+            }
+
           }
           setRefreshing(false)
         }
@@ -121,23 +136,26 @@ function MyCustomers(props) {
                     if (text !== "") {
 
                              
-                                  currentList = props.customers;
+                                  currentList = state.customers;
                                 
 
                                   newList = currentList.filter(item => {
                                         
+                                  const code =  item.code;   
+                                  const codefilter =  text;  
+
                                   const lc = item.name.toLowerCase();
                                       
                                   const filter = text.toLowerCase();
                                       
-                                  return lc.includes(filter);
+                                  return lc.includes(filter) || code.includes(codefilter)
                                 });
 
                       } else {
                         
                        
                             // If the search bar is empty, set newList to original task list
-                              newList = props.customers;
+                              newList = state.customers;
                       }
                         // Set the filtered state based on what our rules added to newList
                       setState(
@@ -262,7 +280,7 @@ function MyCustomers(props) {
          setRefreshing(true);
           setState(
             (state) =>({ 
-              ...state,
+              ...state, 
               filtered : [] 
             })
           )
