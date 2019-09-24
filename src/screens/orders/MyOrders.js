@@ -277,7 +277,7 @@ function MyOrders(props) {
                                                       <Icon type="MaterialCommunityIcons" name="shopping" style={{color:'#ffffff'}}/>
                                                     </View>
                                                     <Body>
-                                                      <H3 style={{color:'#6DB33F'}}>{order.name}</H3>
+                                                      <Text style={{color:'#6DB33F'}}>{order.name}</Text>
                                                       <Text style={{fontSize:10,color:'#838383'}}>Order #: {order.order_number} | Order Date: {order.date} | Delivery Date: {order.delivery_date} </Text>
                                                     </Body>
                                                   </Left>
@@ -305,7 +305,7 @@ function MyOrders(props) {
                                           <Icon type="MaterialCommunityIcons" name="shopping" style={{color:'#ffffff'}}/>
                                         </View>
                                         <Body>
-                                          <H3 style={{color:'#6DB33F'}}>{order.name}</H3>
+                                          <Text style={{color:'#6DB33F'}}>{order.name}</Text>
                                           <Text style={{fontSize:10,color:'#838383'}}>Order #: {order.order_number} | Order Date: {order.date} | Delivery Date: {order.delivery_date} </Text>
                                         </Body>
                                       </Left>
@@ -494,29 +494,34 @@ function MyOrders(props) {
           </View>
         </Modal>
 
-        <Content refreshControl={
-                    <RefreshControl colors={['#6DB33F']} refreshing={refreshing} onRefresh={state.tab?onRefreshPending:onRefreshDelivered} tintColor="#6DB33F" />
-                  } 
-                style={{backgroundColor:"#DFEED7"}}
-         >
+   
         
               {searchBar}
               <Tabs onChangeTab={onChangeTab} tabBarUnderlineStyle={{backgroundColor:'#ffffff'}}>
                
                 <Tab heading="Delivered" activeTextStyle={{color:"#ffffff"}} activeTabStyle={{backgroundColor:'#60993A'}} tabStyle={{backgroundColor:'#60993A'}} textStyle={{color:'#ffffff'}}>
-                       
+                    <Content refreshControl={
+                        <RefreshControl colors={['#6DB33F']} refreshing={refreshing} onRefresh={state.tab?onRefreshPending:onRefreshDelivered} tintColor="#6DB33F" />
+                      } 
+                      style={{backgroundColor:"#DFEED7"}}
+                     >
                         <View style={styles.cardView} >{ordersDelivered}</View> 
-                      
+                    </Content>
                 </Tab>
 
                 <Tab heading="Pending" activeTextStyle={{color:"#ffffff"}} activeTabStyle={{backgroundColor:'#B35644'}}  tabStyle={{backgroundColor:'#B35644'}}  textStyle={{color:'#ffffff'}}>
-
+                      <Content refreshControl={
+                              <RefreshControl colors={['#6DB33F']} refreshing={refreshing} onRefresh={state.tab?onRefreshPending:onRefreshDelivered} tintColor="#6DB33F" />
+                            } 
+                            style={{backgroundColor:"#DFEED7"}}
+                      >
                            <View style={styles.cardView} >{ordersPending}</View>
+                      </Content>
                 </Tab>
                 
               </Tabs>
 
-        </Content>
+      
       </Container>
 
     )

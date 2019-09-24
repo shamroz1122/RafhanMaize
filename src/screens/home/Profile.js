@@ -1,7 +1,35 @@
-import React from 'react'
+import React, {useEffect,useState} from 'react'
 import { View,StyleSheet,Text } from 'react-native';
-import { Container,Header, Content, Card, CardItem,H3, Button, Icon, Left, Body, Right } from 'native-base';
-const Corporation = (props) => {
+import { Container,Header, Content, Card, CardItem,H3, Button, Icon, Left, Body, Right,Thumbnail  } from 'native-base';
+import { connect } from 'react-redux'
+import { getUser } from '../../redux/actions/authActions';
+
+function Profile(props){
+
+    const [state,setState] = useState({
+            "id": '',
+            "name": "",
+            "email": "",
+            "created_at": "",
+            "updated_at": "",
+            "user_profile_img": "",
+            "is_admin": 1,
+            "is_dealer": null,
+            "role_id": 1,
+            "login_time": ""
+    })
+
+    useEffect( ()=>{
+   
+         setState(props.user)
+
+    },[]) 
+
+    useEffect( ()=>{
+   
+        console.log(state)
+
+    },[props.user]) 
 
       const styles = StyleSheet.create({
           header:{
@@ -23,6 +51,17 @@ const Corporation = (props) => {
           }
       })
 
+      var user_role = "";
+
+      if(state.is_admin==1)
+      {
+        user_role = "Admin"
+      }else if(state.is_dealer==1)
+      {
+        user_role = "Dealer"
+      }
+
+      const uri = 'http://order.rafhanmaize.com/dev'+state.user_profile_img
     return (
           <Container style={{backgroundColor:"#DFEED7"}}>
           <Header androidStatusBarColor="#60993A" style={styles.header}>
@@ -43,59 +82,55 @@ const Corporation = (props) => {
                <Card>
                     <CardItem>
                         <View style={{flex:1,flexDirection:'row',alignItems:'center',justifyContent:'center'}}>
-                          <View style={styles.myButton}>
-                            <Icon type="FontAwesome" name="user-circle" style={{fontSize:30,color:'#ffffff'}}/>
-                          </View>
+
+                            { state.user_profile_img!==null ? <Thumbnail large source={{uri: uri}} />:<View style={styles.myButton}>
+                                <Icon type="FontAwesome" name="user-circle" style={{fontSize:30,color:'#ffffff'}}/>
+                              </View> 
+                             }
+                      
                         </View>
                     </CardItem>
                     <CardItem>
                         <View style={{flex:1,alignItems:'center',justifyContent:'center'}}>
-                            <H3 style={{color:'#6DB340'}}>User Name</H3>
+                            <H3 style={{color:'#6DB340'}}>{state.name}</H3>
                         </View>
                     </CardItem>
                     <CardItem>
                         <Body>
                             <Text style={styles.title}>Email</Text>
-                            <Text style={{color:'#333333'}}>username@gmail.com </Text>
+                            <Text style={{color:'#333333'}}>{state.email} </Text>
                         </Body>
                    
                     </CardItem>
                     <CardItem>
                         <Body>
                             <Text style={styles.title}>User Role</Text>
-                            <Text style={{color:'#333333'}}>Customer </Text>
+                            <Text style={{color:'#333333'}}> {user_role} </Text>
                         </Body>
            
                     </CardItem>
                     <CardItem>
                         <Body>
-                            <Text style={styles.title}>Password</Text>
-                            <Text style={{color:'#333333'}}>abc123456</Text>
-                        </Body>
-                    
-                    </CardItem>
-                    <CardItem>
-                        <Body>
                             <Text style={styles.title}>Partner</Text>
-                            <Text style={{color:'#333333'}}>Imtiaz & Co</Text>
+                            <Text style={{color:'#333333'}}>None</Text>
                         </Body>
                     </CardItem>
                     <CardItem>
                         <Body>
                             <Text style={styles.title}>Street</Text>
-                            <Text style={{color:'#333333'}}>Your street address here.</Text>
+                            <Text style={{color:'#333333'}}>None</Text>
                         </Body>
                     </CardItem>
                     <CardItem>
                         <Body>
                             <Text style={styles.title}>City</Text>
-                            <Text style={{color:'#333333'}}>Faisalabad</Text>
+                            <Text style={{color:'#333333'}}>None</Text>
                         </Body>
                     </CardItem>
                     <CardItem>
                         <Body>
                             <Text style={styles.title}>Country</Text>
-                            <Text style={{color:'#333333'}}>Pakistan</Text>
+                            <Text style={{color:'#333333'}}>None</Text>
                         </Body>
                     </CardItem>
                 </Card>
@@ -104,4 +139,22 @@ const Corporation = (props) => {
     )
 }
 
-export default Corporation
+
+const mapStateToProps = (state) => {
+    return {
+        user: state.auth.user,
+    }
+}
+
+const mapDispatchToProps = (dispatch) => {
+
+    return {
+        getUser: (User) => dispatch(getUser(User))
+    }
+}
+
+
+
+export default connect(mapStateToProps, mapDispatchToProps)(Profile)
+
+
