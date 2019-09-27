@@ -4,7 +4,11 @@ const initState = {
   deliveredOrders:{},
   orderDetail:{},
   isSearchDelivered:false,
-  isSearchPending:false
+  isSearchPending:false,
+  isPendingData:true,
+  isDeliveredData:true,
+  msg:null,
+  newOrderPlaced:false
 }
 
 const orderReducer = (state = initState, action) => {
@@ -15,14 +19,17 @@ const orderReducer = (state = initState, action) => {
         ...state,
         error:null,
         pendingOrders:action.pendingOrders,
-        isSearchPending:false
+        isSearchPending:false,
+        isPendingData:action.isPendingData,
+        newOrderPlaced:false
       }
       case 'GET_DELIVERED_ORDERS_SUCCESS':
       return {
           ...state,
           error:null,
           deliveredOrders:action.deliveredOrders,
-          isSearchDelivered:false
+          isSearchDelivered:false,
+          isDeliveredData:action.isDeliveredData
       }
       case 'GET_ORDERS_ERROR':
       return {
@@ -52,7 +59,8 @@ const orderReducer = (state = initState, action) => {
           ...state,
           error:null,
           pendingOrders:action.searchPendingOrders,
-          isSearchPending:true
+          isSearchPending:true,
+          newOrderPlaced:false
           
         }
         case 'SEARCH_PENDING_ORDER_ERROR':
@@ -76,6 +84,22 @@ const orderReducer = (state = initState, action) => {
             isSearchDelivered:false
           
           }
+          case 'ADD_ORDERS_SUCCESS':
+            return {
+              ...state,
+              error:null,
+              msg:action.msg,
+              newOrderPlaced:true
+            }
+            case 'ADD_ORDERS_ERROR':
+            return {
+              ...state,
+              error:action.msg,
+              msg:null,
+              newOrderPlaced:false
+            
+            }
+
       default:
         return state
   } 

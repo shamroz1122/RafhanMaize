@@ -1,6 +1,8 @@
 const initState = {
     error:null,
     products:{},
+    isSearch:false,
+    isData:true
   }
   
   const productReducer = (state = initState, action) => {
@@ -10,7 +12,8 @@ const initState = {
         return {
           ...state,
           error:null,
-          products:action.products
+          products:action.products,
+          isData:action.isData
         }
         case 'GET_PRODUCTS_ERROR':
         return {
@@ -18,6 +21,21 @@ const initState = {
           error:action.msg,
           products:{}
     
+        }
+        case 'SEARCH_PRODUCT_SUCCESS':
+        return {
+            ...state,
+            error:action.msg,
+            products:action.searchProduct,
+            isSearch:true
+        }
+        case 'SEARCH_PRODUCT_ERROR':
+        return {
+            ...state,
+            error:action.msg,
+            isSearch:false,
+            products:{}
+        
         }
         default:
           return state

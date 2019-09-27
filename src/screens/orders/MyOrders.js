@@ -27,7 +27,7 @@ function MyOrders(props) {
       const [refreshing, setRefreshing] = useState(false);
 
       const [pendingPaging, setPendingPaging] = useState({
-        status:'submit',
+        status:'draft',
         page:1
       });
 
@@ -41,6 +41,7 @@ function MyOrders(props) {
 
         props.getDeliveredOrders(deliveredPaging)
         props.getPendingOrders(pendingPaging)
+
       },[]) 
 
       
@@ -51,50 +52,60 @@ function MyOrders(props) {
            console.log('Error Occured: ',props.error)
         }else{
         
+ 
+          if(props.isDeliveredData)
+          {    
+                  // console.log("searchdelivered: ",props.deliveredOrders)
+                    if(Object.keys(props.deliveredOrders).length)
+                    {
+                    
+                        if(props.isSearchDelivered)
+                        {
+                          setState((state)=>({
+                            ...state,
+                            deliveredfiltered: props.deliveredOrders,
+                            loadingScreen:false,
+                            isSearchDelivered:true
+                          }))
+                          
+                        }else{
+                          setState((state)=>({
+                            ...state,
+                            deliveredfiltered: [...props.deliveredOrders,...state.deliveredfiltered],
+                            delivered: [...props.deliveredOrders,...state.delivered],
+                            loadingScreen:false
+                          }))
+                      
+                        }
 
+                    }else{
 
-         // console.log("searchdelivered: ",props.deliveredOrders)
-          if(Object.keys(props.deliveredOrders).length)
-          {
-          
-              if(props.isSearchDelivered)
-              {
-                setState((state)=>({
-                  ...state,
-                  deliveredfiltered: props.deliveredOrders,
-                  loadingScreen:false,
-                  isSearchDelivered:true
-                }))
-                
-              }else{
-                setState((state)=>({
-                  ...state,
-                  deliveredfiltered: [...props.deliveredOrders,...state.deliveredfiltered],
-                  delivered: [...props.deliveredOrders,...state.delivered],
-                  loadingScreen:false
-                }))
-             
-              }
+                      if(props.isSearchDelivered)
+                      {
+                        setState((state)=>({
+                          ...state,
+                          deliveredfiltered: [],
+                          loadingScreen:false,
+                          isSearchDelivered:true
+                        }))
+                        
+                      }
 
-          }else{
+                    }
 
-            if(props.isSearchDelivered)
-            {
-              setState((state)=>({
-                ...state,
-                deliveredfiltered: [],
-                loadingScreen:false,
-                isSearchDelivered:true
-              }))
-              
-            }
-
-          }
-
+                }else{
+            
+                      setState((state)=>({
+                        ...state,
+                        deliveredfiltered: [],
+                        loadingScreen:false,
+                      }))
+                  
+                }
           setRefreshing(false)
         }
     
-       },[props.error,props.deliveredOrders,props.isSearchDelivered]) 
+       },[props.error,props.deliveredOrders,props.isSearchDelivered,props.isDeliveredData]) 
 
 
        useEffect( ()=>{
@@ -105,7 +116,9 @@ function MyOrders(props) {
         }else{
           //console.log('new products: ',props.products)
        
-
+              if(props.isPendingData)
+              {
+             
  // console.log("searchdelivered: ",props.deliveredOrders)
                     if(Object.keys(props.pendingOrders).length)
                     {
@@ -143,12 +156,20 @@ function MyOrders(props) {
                       }
 
                     }
-
+                  }else{
+                
+                    setState((state)=>({
+                      ...state,
+                      pendingfiltered: [],
+                      loadingScreen:false,
+                    }))
+                    
+                  }
 
           setRefreshing(false)
         }
     
-       },[props.error,props.pendingOrders,props.isSearchPending]) 
+       },[props.error,props.pendingOrders,props.isSearchPending,props.isPendingData]) 
 
 
       const styles = StyleSheet.create({
@@ -200,14 +221,14 @@ function MyOrders(props) {
                             const orderNumber = item.order_number
                             const orderNumberFilter = text 
 
-                            const orderDate = item.date
-                            const orderDateFilter = text 
+                            // const orderDate = item.date
+                            // const orderDateFilter = text 
 
                             const name = item.name.toLowerCase();
                             const nameFilter = text.toLowerCase();
                             
                                 
-                            return name.includes(nameFilter) || orderNumber.includes(orderNumberFilter) || orderDate.includes(orderDateFilter)
+                            return name.includes(nameFilter) || orderNumber.includes(orderNumberFilter) 
                           });
 
                 } else {
@@ -340,25 +361,30 @@ function MyOrders(props) {
        }
  
        const searchFromDatabase = (tab) => {
-
         setModalVisible(false)
-     
-            setState((state)=>({
-            ...state,
-            loadingScreen:true
-          }))
-        
-          if(tab=='delivered')
+          if(state.searchFromDB!='')
           {
-          
-            let search = {status:'delivered','search':state.searchFromDB}
-            props.searchDeliveredOrder(search)
-          }else{
-        
-            let search = {status:'submit','search':state.searchFromDB}
-            props.searchPendingOrder(search)
-          }
 
+              
+          
+                  setState((state)=>({
+                  ...state,
+                  loadingScreen:true
+                }))
+                if(tab=='delivered')
+                {
+                
+                  let search = {status:'delivered','search':state.searchFromDB}
+                  props.searchDeliveredOrder(search)
+                }else{
+              
+                  let search = {status:'draft','search':state.searchFromDB}
+                  props.searchPendingOrder(search)
+                }
+      
+          }
+          
+  
       }
 
     const onRefreshPending = React.useCallback(() => {
@@ -376,22 +402,38 @@ function MyOrders(props) {
             isSearchPending:false
           })
         )
-        let page = {status:'submit',page:1}
+        let page = {status:'draft',page:1}
        setPendingPaging(page)
        props.getPendingOrders(page)
 
       }else{
 
+        if(props.newOrderPlaced)
+        {
+          setState(
+            (state) =>({ 
+              ...state, 
+              pendingfiltered : []
+            })
+          )
+          let page = {status:'draft',page:1}
+         setPendingPaging(page)
+         props.getPendingOrders(page)
+
+        }else{
+
+          let page_number = pendingPaging.page+1
+          let page = {status:'draft',page:page_number}
+          setPendingPaging({status:'draft',page:page_number})
+    
+          props.getPendingOrders(page)
+
+        }
       
-        let page_number = pendingPaging.page+1
-        let page = {status:'submit',page:page_number}
-        setPendingPaging({status:'submit',page:page_number})
-  
-        props.getPendingOrders(page)
       }
 
 
-    }, [refreshing,state.isSearchPending]);
+    }, [refreshing,state.isSearchPending,props.newOrderPlaced]);
 
     
     const onRefreshDelivered = React.useCallback(() => {
@@ -478,8 +520,7 @@ function MyOrders(props) {
           <View style={{flex:1,alignItems:'center',justifyContent:'center',backgroundColor:'#DFEED7',padding:15}}>
 
                
-                        <H3>Search Order From Database</H3>
-
+                    {state.tab? <H3>Search Any Pending Order From Database</H3>:<H3>Search Any Delivered Order From Database</H3>}   
                         <Item>
                                 <Input type="text" id="search" onChangeText={onSearchFromDB}  />
                                 <TouchableHighlight
@@ -535,7 +576,10 @@ const mapStateToProps = (state) => {
     pendingOrders: state.order.pendingOrders,
     error: state.order.error,
     isSearchDelivered:state.order.isSearchDelivered,
-    isSearchPending:state.order.isSearchPending
+    isSearchPending:state.order.isSearchPending,
+    isDeliveredData:state.order.isDeliveredData,
+    isPendingData:state.order.isPendingData,
+    newOrderPlaced:state.order.newOrderPlaced
   }
 }
 

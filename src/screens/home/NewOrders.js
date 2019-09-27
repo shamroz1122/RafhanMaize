@@ -1,33 +1,48 @@
 import React, {useEffect,useState} from 'react';
-import { StyleSheet, Text, View, StatusBar,Platform,TextInput, TouchableOpacity } from 'react-native';
-import { Container,Content,Picker,Item,Icon,DatePicker, Card, CardItem,Right,H3,Left } from 'native-base';
+import { StyleSheet, Text, View, StatusBar,Platform,TextInput, TouchableOpacity,Image } from 'react-native';
+import { Container,Content,Picker,Item,Icon,DatePicker, Card, CardItem,Right,H3,Left,Toast,Spinner  } from 'native-base';
 import uuid from 'uuid/v1';
+import { connect } from 'react-redux'
+import { getMyAllCustomers } from '../../redux/actions/customerActions'
+import { getOrderNumber } from '../../redux/actions/customerActions'
+import { getSelectedProducts } from '../../redux/actions/customerActions'
+import { addOrder } from '../../redux/actions/orderActions'
+import SpinnerNew from 'react-native-loading-spinner-overlay';
+import loaderImage from '../../../assets/loader-gif.gif'
 
-function NewOrder(){
+
+
+function NewOrder(props){
 
     const [state,setState] = useState({
           orderNumber:'',
           orderNumberLabel:'',
-
+          spinner:false,
+          loadingScreen:true,
+          showToast: false,
           securityDepositer:'',
-         
-          poNumber:'',
-
+          po_number:'',
           note:'',
-
-          customer:'',
-
-          orderDate:'',
+          customers:[],
+          categories:[],
+          partner_id:'0',
+          category:'0',
+          selectedProducts:[],
+          order_date:'',
           orderDateLabel:'',
         
-          deliveryDate:'',
+          delivery_date:'',
          
           orderDetails:[
-             {productName:'', uom:'BG',quantity:'',deliveryDate:'',key:uuid()}
+             {product_id:'',productName:'', uom:'BG',qty:'',delivery_date:'',key:uuid()}
           ]
 
          
     })
+    const [paging, setPaging] = useState({
+      page:1
+    });
+
 
       useEffect( ()=>{
         if(Platform.OS==='android')
@@ -36,21 +51,125 @@ function NewOrder(){
           StatusBar.setBackgroundColor("#60993A")
         }
   
+
+       props.getMyAllCustomers()
+       props.getOrderNumber()
+    
+
         const today = new Date();  
         const currentDate = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
         setState((state)=>({
           ...state,
-          orderNumberLabel: 'Order #: PK0000517',
-          orderNumber:'PK0000517',
           securityDepositer: 'Security Depositer',
           orderDateLabel: 'Order Date '+currentDate,
-          orderDate: currentDate
+          order_date: currentDate
           
         }))
        
       
       },[])
 
+      useEffect( ()=>{
+
+
+          if(props.customers.length)
+          {
+            setState((state)=>({
+              ...state,
+                 customers: props.customers,
+                 loadingScreen:false,
+            }))
+          }
+       
+      },[props.customers])
+
+
+      useEffect( ()=>{
+
+        if(props.categories.length)
+        {
+          setState((state)=>({
+            ...state,
+               categories: props.categories,
+               orderNumber:props.orderNumber,
+               orderNumberLabel: 'Order #: 0000'+props.orderNumber,
+           
+          }))
+        }
+     
+    },[props.orderNumber,props.categories])
+
+    useEffect( ()=>{
+
+      if(props.orderSuccess)
+      {
+        showToast(props.orderSuccess,'success')
+        var ordernum = Number(props.orderNumber)
+        ordernum = ordernum+1
+        setState((state)=>({
+          ...state,
+          orderDetails: [{product_id:'',productName:'', uom:'BG',qty:'',delivery_date:'',key:uuid()}],
+          partner_id:'0',
+          category:'0',
+          po_number:'',
+          note:'',
+          orderNumberLabel: 'Order #: 0000'+ordernum,
+        }))
+        showSpinner(false)
+      }else if(props.orderFail){
+        showToast(props.orderFail,'danger')
+        showSpinner(false)
+      }
+   
+  },[props.orderSuccess,props.orderFail])
+
+         useEffect( ()=>{
+
+            
+                  if(props.selectedProducts.length)
+                  {
+                   
+                    setState((state)=>({
+                      ...state,
+                      selectedProducts:props.selectedProducts,
+                      loadingScreen:false,
+                        
+                    }))
+                  }else{
+                
+                    if(props.isSelectedData==false){
+                     
+                      setState((state)=>({
+                        ...state,
+                        selectedProducts:[],
+                        loadingScreen:false,
+                          
+                      }))
+
+                    }
+                
+                  }
+          
+        },[props.selectedProducts,props.isSelectedData])
+
+
+        const showToast = (msg,type) => {
+              Toast.show({
+                text:msg,
+                buttonText: "Ok",
+                duration: 3000,
+                type: type,
+            })
+
+          }
+
+          const showSpinner = (show)=>{
+                setState((state)=>({
+                  ...state,
+                  spinner: show
+                  })
+                )
+          }
 
       const onSetDeliveryDate = (newDate) => {
 
@@ -58,8 +177,8 @@ function NewOrder(){
         
       setState((state)=>({
             ...state,
-            deliveryDate: deliveryDate,
-            orderDetails: state.orderDetails.map(el => ( {...el, deliveryDate:deliveryDate}))
+            delivery_date: deliveryDate,
+            orderDetails: state.orderDetails.map(el => ( {...el, delivery_date:deliveryDate}))
           }))
 
       }
@@ -68,7 +187,7 @@ function NewOrder(){
 
         setState((state)=>({
           ...state,
-          poNumber: text
+          po_number: text
      
         })
         )
@@ -82,24 +201,64 @@ function NewOrder(){
         })
         )
       }
-
+      
       const onCustomerPicker = (value) => {
+
+
         setState((state)=>({
           ...state,
-          customer: value
+          partner_id: value
         })
         )
+
+          if(value!=='0' && state.category!=='0')
+          {
+                setState((state)=>({
+                  ...state,
+                  loadingScreen:true,
+                })
+              )
+
+             let data = {customer_id:value,cat_id:state.category}
+
+             props.getSelectedProducts(data)
+          }
+
+
+      }
+      const onCategoryPicker = (value) => {
+
+       
+
+            setState((state)=>({
+              ...state,
+              category: value
+            })
+          )
+
+  
+          if(state.partner_id!=='0' && value!=='0')
+          {
+                setState((state)=>({
+                  ...state,
+                  loadingScreen:true,
+                })
+              )
+
+             let data = {customer_id:state.partner_id,cat_id:value}
+
+             props.getSelectedProducts(data)
+          }
+         
       }
       const onChangeOrderDetail1 = (text,key) => {
 
-       
           setState((state)=>({
             ...state,
-            orderDetails: state.orderDetails.map(el => (el.key === key ? {...el, productName:text} : el))
+            orderDetails: state.orderDetails.map(el => (el.key === key ? {...el,product_id:text} : el))
           })
           )
         
-        //  console.log(state.orderDetails)
       }
 
       const onChangeOrderDetail2 = (text,key) => {
@@ -107,18 +266,18 @@ function NewOrder(){
        
         setState((state)=>({
           ...state,
-          orderDetails: state.orderDetails.map(el => (el.key === key ? {...el, quantity:text} : el))
+          orderDetails: state.orderDetails.map(el => (el.key === key ? {...el, qty:text} : el))
         })
         )
       
-        //console.log(state.orderDetails)
+       
     }
 
     const addNewOrderDetail = () =>{
 
       setState((state)=>({
         ...state,
-        orderDetails: [...state.orderDetails, {productName:'', uom:'BG',quantity:'',deliveryDate:state.deliveryDate,key:uuid()}]
+        orderDetails: [...state.orderDetails, {product_id:'',productName:'', uom:'BG',qty:'',delivery_date:state.delivery_date,key:uuid()}]
       })
       )
 
@@ -135,6 +294,44 @@ function NewOrder(){
         })
       )
     
+    }
+    
+
+    const saveOrder = () => {
+      
+      // if(state.po_number=='')
+      // {
+      
+      //   showToast("Please Enter PO Number",'danger')
+      // }else 
+      if(state.partner_id=='0')
+      {
+       
+        showToast("Please Select Customer",'danger')
+
+      }else if(state.category=='0')
+      {
+      
+        showToast("Please Select Category",'danger')
+      }
+      // else if(state.delivery_date=='')
+      // {
+       
+      //   showToast("Please Select Delivery Date",'danger')
+      // }
+      else{
+
+        showSpinner(true)
+        let orderdata = {
+          po_number:state.po_number,
+          note:state.note,
+          order_date:state.order_date,
+          partner_id:state.partner_id,
+          delivery_date:state.delivery_date,
+          products:state.orderDetails
+        }
+        props.addOrder(orderdata)
+      }
     }
 
     const styles = StyleSheet.create({
@@ -285,6 +482,51 @@ function NewOrder(){
     });
 
 
+
+  
+
+                const customers =  state.customers.length > 0 ? (
+
+                        state.customers.map(customer => {
+                        
+                        return (
+                                    <Picker.Item label={customer.name} key={customer.id} value={customer.id} />
+                                                        
+                                )
+                          
+                            })
+
+                  ) : <Picker.Item label="NothingFound" value={0} key={uuid()} />
+
+                  const categories =  state.categories.length > 0 ? (
+
+                    state.categories.map(category => {
+                    
+                    return (
+                                <Picker.Item label={category.name} key={category.id} value={category.id} />
+                                                    
+                            )
+                      
+
+                        })
+
+              ) : <Picker.Item label="Nothing Found" value={0} key={uuid()} />
+
+
+              const selectedProducts =  state.selectedProducts.length > 0 ? (
+
+                state.selectedProducts.map(product => {
+                
+                return (
+                            <Picker.Item label={product.p_name} key={product.p_id} value={product.p_id} />
+                                                
+                        )
+                  
+                    })
+
+                 ) : <Picker.Item label="No Products" value={0} key={uuid()} />
+                
+
     const orderDetails =   state.orderDetails.map((orderDetail,index) => {
     
         const actionButton = index === 0 ?   <Icon onPress={addNewOrderDetail} style={{color:'#6EB341'}} type="AntDesign" name="pluscircleo" ></Icon>:   <Icon onPress={()=>removeOrderDetail(orderDetail.key)} style={{color:'#B35644'}} type="AntDesign" name="minuscircleo" ></Icon>
@@ -311,13 +553,11 @@ function NewOrder(){
                               placeholder="Product Name"
                               placeholderStyle={{ color: "#777777" }}
                               placeholderIconColor="#777777" 
-                              selectedValue={orderDetail.productName}
+                              selectedValue={orderDetail.product_id}
                               onValueChange={(text)=>onChangeOrderDetail1(text,orderDetail.key)}
                             >
-                              <Picker.Item label="Product Name" value="key0" />
-                              <Picker.Item label="product 1" value="key1" />
-                              <Picker.Item label="product 2" value="key2" />
-                              <Picker.Item label="product 3" value="key3" />
+                              <Picker.Item label="Product Name" value="0" />
+                              {selectedProducts}
                             
                             </Picker>
                           </Item>
@@ -343,7 +583,7 @@ function NewOrder(){
                             <View style={{flex:1,flexDirection:'row',justifyContent:'space-between'}}>  
                                   <TextInput
                                       style={styles.deliveryDateDisable}
-                                      placeholder={"Delivery Date: "+orderDetail.deliveryDate}
+                                      placeholder={"Delivery Date: "+orderDetail.delivery_date}
                                       placeholderTextColor = "#777777"
                                       editable={false}
                                   />
@@ -354,10 +594,18 @@ function NewOrder(){
             )
         })
 
+        const customIndicator = <Image source={loaderImage} style={{height: 50, width: 50,position:'absolute'}}/>
 
     return (
 
           <Container style={styles.formFlex}>
+                 
+        <SpinnerNew
+              overlayColor="rgba(0, 0, 0, 0.3)"
+              visible={state.loadingScreen}
+              customIndicator={customIndicator}
+            />
+
                 <Content>
                          
                                <TextInput
@@ -398,13 +646,31 @@ function NewOrder(){
                                       placeholder="Customer"
                                       placeholderStyle={{ color: "#777777" }}
                                       placeholderIconColor="#777777" 
-                                      selectedValue={state.customer}
+                                      selectedValue={state.partner_id}
                                       onValueChange={onCustomerPicker}
                                     >
-                                      <Picker.Item label="Customer*" value="key0" />
-                                      <Picker.Item label="Asim" value="key1" />
-                                      <Picker.Item label="Shamroz" value="key2" />
-                                      <Picker.Item label="Azhar Iqbal" value="key3" />
+                               
+                                      <Picker.Item label="Customer*" value="0" />
+                                       {customers}
+                                     
+                                    </Picker>
+                                  </Item>
+                                </View>
+                                
+                                <View style={styles.customerPicker}>
+                                 <Item picker >
+                                    <Picker
+                                      mode="dropdown"
+                                      iosIcon={<Icon name="arrow-down" />}
+                                   
+                                      placeholder="Product Category"
+                                      placeholderStyle={{ color: "#777777" }}
+                                      placeholderIconColor="#777777" 
+                                      selectedValue={state.category}
+                                      onValueChange={onCategoryPicker}
+                                    >
+                                      <Picker.Item label="Product Category*" value="0" />
+                                       {categories}
                                      
                                     </Picker>
                                   </Item>
@@ -440,10 +706,10 @@ function NewOrder(){
                                     </View>
                                   
                                 {orderDetails}
-
-                                <TouchableOpacity style={styles.button} >
+                                {state.spinner?<Spinner color='#6DB33F' />: <TouchableOpacity onPress={saveOrder}style={styles.button} >
                                   <Text style={styles.loginText}>SAVE</Text>
-                                </TouchableOpacity>
+                                </TouchableOpacity>}
+                             
 
                </Content>
           </Container>
@@ -452,4 +718,28 @@ function NewOrder(){
     )
 }
 
-export default NewOrder;
+
+
+const mapStateToProps = (state) => {
+  return {
+    customers: state.customer.allCustomers,
+    orderNumber: state.customer.orderNumber,
+    categories: state.customer.categories,
+    selectedProducts: state.customer.selectedProducts,
+    isSelectedData:state.customer.isSelectedData,
+    orderSuccess:state.order.msg,
+    orderFail:state.order.msg,
+  }
+}
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    getMyAllCustomers: () => dispatch(getMyAllCustomers()),
+    getOrderNumber: () => dispatch(getOrderNumber()),
+    getSelectedProducts: (data) => dispatch(getSelectedProducts(data)),
+    addOrder: (data) => dispatch(addOrder(data)),
+  
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(NewOrder)

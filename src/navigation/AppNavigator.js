@@ -8,6 +8,7 @@ import MyCustomers from '../screens/customers/MyCustomers';
 import NewOrders from '../screens/home/NewOrders';
 import MyProfile from '../screens/home/Profile';
 import Home from '../screens/home/Home';
+import PrivacyPolicy from '../screens/privacyPolicy/privacyPolicy';
 import Corporation from '../screens/customers/Corporation';
 import Login from '../screens/auth/Login';
 import Logout from '../screens/auth/Logout';
@@ -17,9 +18,11 @@ import Rafhanlogo from '../../assets/RafhanLogocolor.png'
 import {Image,Text,Animated, Easing,Platform} from 'react-native'
 import {Thumbnail,Icon} from 'native-base'
 import { Ionicons, AntDesign,Entypo,FontAwesome,FontAwesome5 } from '@expo/vector-icons';
+import store from '../redux/store'
 
-const uri = "https://facebook.github.io/react-native/docs/assets/favicon.png";
 
+
+var URL = ""
 
 let SlideFromRight = (index, position, width) => {
   const translateX = position.interpolate({
@@ -58,15 +61,17 @@ const TransitionConfiguration = () => {
 const HomeStack = createStackNavigator({
   Home:{screen:Home,
     navigationOptions:({ navigation }) => {
-
-  
+      const state = store.getState();
+      const userImage = state.auth.user.user_profile_img
+      URL = "http://order.rafhanmaize.com/dev"+userImage;
+      
       return {
         headerTitle: <Image source={Rafhanlogo} style={{ height: 60,width: 100,marginLeft:Platform.OS === 'android' ? 70 : 0,marginBottom:20}} />,
         headerLeft:(
          <Icon style={{paddingLeft:15,paddingBottom:20}} onPress={() => navigation.openDrawer()} ios="ios-menu" android="md-menu" size={30} />
         ),
         headerRight:(
-           <Thumbnail small source={{uri:uri}} style={{marginRight:15,marginBottom:20}} />
+           <Thumbnail small source={{uri:URL}} style={{marginRight:15,marginBottom:20}} />
         ),
         headerStyle:{height:30},
       }
@@ -92,7 +97,17 @@ const HomeStack = createStackNavigator({
         headerTintColor: '#ffffff',
         header:null
       }
-    }}
+    }},
+     PrivacyPolicy:{screen:PrivacyPolicy,
+      navigationOptions:({ navigation }) => {
+        return {
+          headerTitle: <Text style={{color:"#ffffff",paddingBottom:25,fontSize:22}}>Privacy Policy</Text>,
+          headerStyle:{height:30,backgroundColor:'#6DB33F',color:"#ffffff"},
+          headerBackImage: Platform.OS === 'android'? <Icon type="AntDesign" style={{fontSize:20,color:'#ffffff',marginBottom:20}} small name="left"  /> :null,
+          headerTintColor: '#ffffff',
+       
+        }
+      }}
 },{
   initialRouteName: 'Home',
   headerMode: 'screen',
@@ -339,12 +354,13 @@ const DashboardTabNavigator = createBottomTabNavigator({
     DashboardTabNavigator:DashboardTabNavigator
   },{
     defaultNavigationOptions:({navigation})=>{
+    
       return {
         headerLeft:(
           <Ionicons style={{paddingLeft:15,paddingBottom:20}} onPress={() => navigation.openDrawer()} name="md-menu" size={30} />
         ),
         headerRight:(
-           <Thumbnail small source={{uri:uri}} style={{marginRight:15,marginBottom:20}} />
+           <Thumbnail small source={{uri:URL}} style={{marginRight:15,marginBottom:20}} />
         ),
         header:null
       }
@@ -369,6 +385,9 @@ const DashboardTabNavigator = createBottomTabNavigator({
     },
     MyProfile:{
      screen:MyProfile
+    },
+    PrivacyPolicy:{
+        screen:PrivacyPolicy
     },
     Logout:{
       screen:Logout

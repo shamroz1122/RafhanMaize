@@ -7,7 +7,7 @@ import { AsyncStorage } from 'react-native';
 // Login - get user token
 export const login = Data => dispatch => {
 
-        setBasePath()
+        setBasePath() 
 
         axios.post("/user_login", Data)
         .then((res) => {

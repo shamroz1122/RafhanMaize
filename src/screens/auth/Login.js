@@ -32,7 +32,7 @@ function Login(props){
        
                if (props.isAuthenticated) {
                     setState({...state,isLoading:false})
-                    props.navigation.navigate('App'); // push user to dashboard when they login
+                    props.navigation.navigate('App',{userImage:props.user.user_profile_img}); // push user to dashboard when they login
                 }
 
                 if(props.authError)
@@ -48,7 +48,7 @@ function Login(props){
                     setState({...state,isLoading:false})
                 }
 
-        },[props.authError,props.isAuthenticated]) 
+        },[props.authError,props.isAuthenticated,props.user]) 
 
     const styles = StyleSheet.create({
         container:{
@@ -153,7 +153,8 @@ function Login(props){
 const mapStateToProps = (state) => {
     return {
         authError: state.auth.authError,
-        isAuthenticated: state.auth.isAuthenticated
+        isAuthenticated: state.auth.isAuthenticated,
+        user: state.auth.user,
     }
 }
 

@@ -23,7 +23,7 @@ class AuthLoadingScreen extends React.Component {
 
     const userToken = await AsyncStorage.getItem('Token');
     const User = await AsyncStorage.getItem('User');
-
+    const parsedUser = JSON.parse(User)
     // This will switch to the App screen or Auth screen and this loading
     // screen will be unmounted and thrown away.
 
@@ -38,9 +38,9 @@ class AuthLoadingScreen extends React.Component {
         }else{
             setBasePath()
             setAuthToken(userToken);
-            this.props.dispatch(setCurrentUser(User));
+            this.props.dispatch(setCurrentUser(parsedUser));
             this.setState({ isReady: false });
-           await this.props.navigation.navigate('App');
+           await this.props.navigation.navigate('App',{userImage:parsedUser.user_profile_img});
         }
 
     }else{
@@ -56,10 +56,10 @@ class AuthLoadingScreen extends React.Component {
     const customIndicator = <Image source={loaderImage} style={{height: 50, width: 50,position:'absolute'}}/>
     return (
       <View style={{flex:1,justifyContent:'center',alignItems:'center'}}>
-        {/* <Spinner
+        <Spinner
           visible={this.state.isReady}
           customIndicator={customIndicator}
-        /> */}
+        />
         <StatusBar barStyle="default" />
       </View>
     );

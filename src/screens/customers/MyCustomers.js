@@ -24,16 +24,7 @@ function MyCustomers(props) {
       });
 
 
-    // var allCustomers =  [
-    //   { customerName: 'Malik Corporation',customerAddress:'Street Address: None | City: None', id:'PK0000517',code:'12001048' },
-    //   { customerName: 'Sahara Corporation',customerAddress:'Street Address: None | City: None',id:'PK0000518',code:'12001048' },
-    //   { customerName: 'Sitara Corporation',customerAddress:'Street Address: None | City: None',id:'PK0000519',code:'12001048' },
-    //   { customerName: 'Dina Corporation',customerAddress:'Street Address: None | City: None',id:'PK0000520',code:'12001048' },
-    //   { customerName: 'Lahore Corporation',customerAddress:'Street Address: None | City: None',id:'PK0000521',code:'12001048' },
-    //   { customerName: 'Ziarat Corporation',customerAddress:'Street Address: None | City: None',id:'PK0000522',code:'12001048' },
-    //   { customerName: 'Anwar Corporation',customerAddress:'Street Address: None | City: None',id:'PK0000523',code:'12001048' }
-    // ]
-
+    
 
 
       useEffect( ()=>{
@@ -51,49 +42,59 @@ function MyCustomers(props) {
         }else{
           //console.log('new products: ',props.products)
         
-
-          if(Object.keys(props.customers).length)
+          if(props.isData)
           {
-            
-                  //  console.log("orderfilter: ",state.filtered)
+
+                if(Object.keys(props.customers).length)
+                {
+                  
+                        //  console.log("orderfilter: ",state.filtered)
+                        if(props.isSearch)
+                        {
+                          setState((state)=>({
+                            ...state,
+                            filtered: props.customers,
+                            loadingScreen:false,
+                            isSearch:true
+                          }))
+                        }else{
+                          setState((state)=>({
+                            ...state,
+                            filtered: [...props.customers,...state.filtered],
+                            customers:[...props.customers,...state.customers],
+                            loadingScreen:false,
+                            isSearch:false
+                          }))
+                        }
+                  
+                }else{
+
                   if(props.isSearch)
                   {
                     setState((state)=>({
                       ...state,
-                      filtered: props.customers,
+                      filtered: [],
                       loadingScreen:false,
                       isSearch:true
                     }))
-                  }else{
-                    setState((state)=>({
-                      ...state,
-                      filtered: [...props.customers,...state.filtered],
-                      customers:[...props.customers,...state.customers],
-                      loadingScreen:false,
-                      isSearch:false
-                    }))
+                    
                   }
-             
-                  
+
+                }
+
+        }else{
+          setState((state)=>({
+            ...state,
+            filtered: [],
+            loadingScreen:false,
+          }))
           
-          }else{
+        }
 
-            if(props.isSearch)
-            {
-              setState((state)=>({
-                ...state,
-                filtered: [],
-                loadingScreen:false,
-                isSearch:true
-              }))
-              
-            }
-
-          }
           setRefreshing(false)
         }
     
-       },[props.error,props.customers,props.isSearch]) 
+       },[props.error,props.customers,props.isSearch,props.isData]) 
 
 
 
@@ -247,7 +248,10 @@ function MyCustomers(props) {
        }
   
        const searchFromDatabase = () => {
-             setModalVisible(false)
+
+        setModalVisible(false)
+        if(state.searchFromDB!='')
+        {
           
              setState((state)=>({
               ...state,
@@ -256,6 +260,8 @@ function MyCustomers(props) {
 
             let search = {'search':state.searchFromDB}
             props.searchCustomer(search)
+
+          }
        }
   
 
@@ -368,7 +374,8 @@ const mapStateToProps = (state) => {
   return {
     customers: state.customer.customers,
     error: state.customer.error,
-    isSearch:state.customer.isSearch
+    isSearch:state.customer.isSearch,
+    isData:state.customer.isData
   }
 }
 

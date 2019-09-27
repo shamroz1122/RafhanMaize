@@ -7,27 +7,26 @@ import { getUser } from '../../redux/actions/authActions';
 function Profile(props){
 
     const [state,setState] = useState({
-            "id": '',
-            "name": "",
-            "email": "",
-            "created_at": "",
-            "updated_at": "",
-            "user_profile_img": "",
-            "is_admin": 1,
-            "is_dealer": null,
-            "role_id": 1,
-            "login_time": ""
+            id: '',
+            name: "",
+            email: "",
+            created_at: "",
+            updated_at: "",
+            user_profile_img: "",
+            is_admin: 1,
+            is_dealer: null,
+            role_id: 1,
+            login_time: ""
     })
 
     useEffect( ()=>{
-   
-         setState(props.user)
+        
 
     },[]) 
 
     useEffect( ()=>{
    
-        console.log(state)
+        setState(props.user)
 
     },[props.user]) 
 
@@ -55,6 +54,7 @@ function Profile(props){
 
       if(state.is_admin==1)
       {
+
         user_role = "Admin"
       }else if(state.is_dealer==1)
       {
@@ -83,7 +83,7 @@ function Profile(props){
                     <CardItem>
                         <View style={{flex:1,flexDirection:'row',alignItems:'center',justifyContent:'center'}}>
 
-                            { state.user_profile_img!==null ? <Thumbnail large source={{uri: uri}} />:<View style={styles.myButton}>
+                            { state.user_profile_img!=="" ? <Thumbnail large source={{uri: uri}} />:<View style={styles.myButton}>
                                 <Icon type="FontAwesome" name="user-circle" style={{fontSize:30,color:'#ffffff'}}/>
                               </View> 
                              }

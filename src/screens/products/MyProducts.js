@@ -1,8 +1,9 @@
 import React,{useState,useEffect} from 'react'
-import {View,Text,StyleSheet,TouchableOpacity,Image,RefreshControl} from 'react-native'
+import {View,Text,StyleSheet,TouchableOpacity,Image,RefreshControl,TouchableHighlight,Modal} from 'react-native'
 import { Container, Header, Left, Body, Right, Button, Icon,Content,H3,Card, CardItem,Item,Input } from 'native-base';
 import { connect } from 'react-redux'
 import { getAllProducts } from '../../redux/actions/productActions'
+import { searchProducts } from '../../redux/actions/productActions'
 import Spinner from 'react-native-loading-spinner-overlay';
 import loaderImage from '../../../assets/loader-gif.gif'
 
@@ -10,42 +11,88 @@ function MyProducts(props) {
 
       const [state,setState] = useState({
         searchBar:false,
-        filtered:[],
+        filtered: [],
+        products:[],
         loadingScreen:true,
+        modalVisible: false,
+        searchFromDB:'',
+        isSearch:false
       })
       const [refreshing, setRefreshing] = useState(false);
       const [paging, setPaging] = useState({
         page:1
       });
 
-    useEffect( ()=>{
+    useEffect( ()=>{ 
     
        props.getAllProducts(paging.page)
 
       },[]) 
 
-
-      useEffect( ()=>{
+       useEffect( ()=>{
+  
         if(props.error)
         {
            console.log('Error Occured: ',props.error)
         }else{
-          //console.log('new products: ',props.products)
-          if(Object.keys(props.products).length)
+
+          if(props.isData)
           {
-              setState((state)=>({
-                ...state,
-                filtered: [ ...props.products,...state.filtered],
-                loadingScreen:false
-              })
-              )
+                    //console.log('new products: ',props.products)
+                    if(Object.keys(props.products).length)
+                    {
+                            //  console.log("orderfilter: ",state.filtered)
+                            if(props.isSearch)
+                            {
+
+                              setState((state)=>({
+                                ...state,
+                                filtered: props.products,
+                                loadingScreen:false,
+                                isSearch:true
+                              }))
+                            }else{
+
+                              setState((state)=>({
+                                ...state,
+                                filtered: [...props.products,...state.filtered],
+                                products:[...props.products,...state.products],
+                                loadingScreen:false,
+                                isSearch:false
+                              }))
+                            }
+                        
+                    }else{
+
+                      if(props.isSearch)
+                      {
+                        setState((state)=>({
+                          ...state,
+                          filtered: [],
+                          loadingScreen:false,
+                          isSearch:true
+                        }))
+                        
+                      }
+
+                    }
+          }else{
+            setState((state)=>({
+              ...state,
+              filtered: [],
+              loadingScreen:false,
+            }))
             
           }
+       
           setRefreshing(false)
-    
         }
     
-       },[props.error,props.products]) 
+       },[props.error,props.products,props.isSearch,props.isData]) 
+
+
+
+
 
       const styles = StyleSheet.create({
 
@@ -92,20 +139,30 @@ function MyProducts(props) {
               // If the search bar isn't empty
               if (text !== "") {
       
-                            currentList = props.products;
+                            currentList = state.products;
 
                             newList = currentList.filter(item => {
                                    
-                            const lc = item.name.toLowerCase();
+                            
+
+                            const productCode = item.code
+                            const productCodeFilter = text 
+
+                            const productReference = item.referance
+                            const productReferenceFilter = text 
+
+                            const name = item.name.toLowerCase();
+                            const nameFilter = text.toLowerCase();
+                            
                                 
-                            const filter = text.toLowerCase();
-                                
-                            return lc.includes(filter);
+                            return name.includes(nameFilter) || productCode.includes(productCodeFilter) || productReference.includes(productReferenceFilter)
+                       
+                       
                           });
 
                 } else {
                        // If the search bar is empty, set newList to original task list
-                        newList = props.products;
+                        newList = state.products;
                 }
                   // Set the filtered state based on what our rules added to newList
                 setState(
@@ -116,13 +173,21 @@ function MyProducts(props) {
                 )
   
       }
+      const setModalVisible = (visible) => {
+        setState({...state,modalVisible: visible});
+      }
 
 
        const searchBar = state.searchBar==true? 
                         (
                               <Item>
                                 <Input type="text" id="search" onChangeText={onSearch}  placeholder="Search" />
-                                <Icon type="FontAwesome" name="cubes" /> 
+                                <TouchableHighlight
+                                  onPress={() => {
+                                      setModalVisible(true);
+                                  }}>
+                                  <Icon type="FontAwesome" name="search-plus" />
+                                </TouchableHighlight>
                               </Item>
                         ):null
 
@@ -168,7 +233,7 @@ function MyProducts(props) {
                                         )
                                     })
 
-                          ) : null 
+                          ) : <Text style={{textAlign:'center'}}>Opps! No Result Found</Text>
         
       
 
@@ -181,18 +246,58 @@ function MyProducts(props) {
       )
     }
 
+    const onSearchFromDB = (text) => {
+      //   alert('hello')
+         setState((state)=>({
+           ...state,
+           searchFromDB:text
+         })
+         )
+       }
+  
+    const searchFromDatabase = () => {
+
+      setModalVisible(false)
+      if(state.searchFromDB!='')
+      {
+          setState((state)=>({
+          ...state,
+          loadingScreen:true
+        }))
+
+        let search = {'search':state.searchFromDB}
+        props.searchProducts(search)
+      }
+      
+    }
+
+
 
     const onRefresh = React.useCallback(() => {
       setRefreshing(true);
       let page_number = paging.page+1
       let page = {page:page_number}
       setPaging({page:page_number})
-
       props.getAllProducts(page)
-      // wait(2500).then(() => setRefreshing(false));
-
-    }, [refreshing]);
     
+      }, [refreshing]);
+
+      const newRefresh =  React.useCallback(() => {
+        setRefreshing(true);
+          setState(
+            (state) =>({ 
+              ...state, 
+              filtered : [] 
+            })
+          )
+        let page = {page:1}
+        setPaging(page)
+        props.getAllProducts(page)
+
+      }, [refreshing]);
+
+
+
     const customIndicator = <Image source={loaderImage} style={{height: 50, width: 50,position:'absolute'}}/>
   
     return (
@@ -219,9 +324,36 @@ function MyProducts(props) {
               visible={state.loadingScreen}
               customIndicator={customIndicator}
             />
+  
+         <Modal
+          animationType="slide"
+          transparent={false}
+          visible={state.modalVisible}
+          onRequestClose={() => {
+            setModalVisible(!state.modalVisible);
+          }}>
+
+
+          <View style={{flex:1,alignItems:'center',justifyContent:'center',backgroundColor:'#DFEED7',padding:15}}>
+
+               
+                        <H3>Search Any Product From Database</H3>
+
+                        <Item>
+                                <Input type="text" id="search" onChangeText={onSearchFromDB}  />
+                                <TouchableHighlight
+                                  onPress={() => {
+                                      searchFromDatabase();
+                                  }}>
+                                  <Icon type="FontAwesome" name="search" />
+                                </TouchableHighlight>
+                         </Item>
+              
+          </View>
+        </Modal>
 
         <Content  refreshControl={
-          <RefreshControl colors={['#6DB33F']} refreshing={refreshing} onRefresh={onRefresh} tintColor="#6DB33F" />
+          <RefreshControl colors={['#6DB33F']} refreshing={refreshing} onRefresh={state.isSearch?newRefresh:onRefresh} tintColor="#6DB33F" />
         }>
         
               {searchBar}
@@ -242,15 +374,17 @@ function MyProducts(props) {
 const mapStateToProps = (state) => {
   return {
     products: state.product.products,
- 
     error: state.product.error,
+    isSearch:state.product.isSearch,
+    isData: state.product.isData
   }
 }
 
 const mapDispatchToProps = (dispatch) => {
 
   return {
-    getAllProducts: (page) => dispatch(getAllProducts(page))
+    getAllProducts: (page) => dispatch(getAllProducts(page)),
+    searchProducts: (search) => dispatch(searchProducts(search))
   }
 }
 
