@@ -66,7 +66,7 @@ const HomeStack = createStackNavigator({
       URL = "http://order.rafhanmaize.com/dev"+userImage;
       
       return {
-        headerTitle: <Image source={Rafhanlogo} style={{ height: 60,width: 100,marginLeft:Platform.OS === 'android' ? 70 : 0,marginBottom:20}} />,
+        headerTitle: <Image source={Rafhanlogo} style={{ height: 60,width: 100,marginLeft:Platform.OS === 'android' ? 70 : 0,marginBottom:Platform.OS === 'android' ? 20 : 10}} />,
         headerLeft:(
          <Icon style={{paddingLeft:15,paddingBottom:20}} onPress={() => navigation.openDrawer()} ios="ios-menu" android="md-menu" size={30} />
         ),

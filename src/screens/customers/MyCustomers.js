@@ -1,11 +1,11 @@
 import React,{useState,useEffect} from 'react'
-import {View,Text,Platform,StyleSheet,TouchableOpacity,Image,RefreshControl,TouchableHighlight,Modal} from 'react-native'
+import {View,Text,Platform,StyleSheet,TouchableOpacity,RefreshControl,TouchableHighlight,Modal} from 'react-native'
 import { Container, Header, Left, Body, Right, Button, Icon,Content,H3,Card, CardItem,Item,Input } from 'native-base';
 import { connect } from 'react-redux'
 import { getAllCustomers } from '../../redux/actions/customerActions'
 import { searchCustomer } from '../../redux/actions/customerActions'
 import Spinner from 'react-native-loading-spinner-overlay';
-import loaderImage from '../../../assets/loader-gif.gif'
+//import loaderImage from '../../../assets/loader-gif.gif'
 
 function MyCustomers(props) {
 
@@ -296,7 +296,7 @@ function MyCustomers(props) {
 
  }, [refreshing]);
 
-    const customIndicator = <Image source={loaderImage} style={{height: 50, width: 50,position:'absolute'}}/>
+  //  const customIndicator = <Image source={loaderImage} style={{height: 50, width: 50,position:'absolute'}}/>
 
     return (
      <Container style={{backgroundColor:"#DFEED7"}}>
@@ -352,7 +352,7 @@ function MyCustomers(props) {
         <Spinner
               overlayColor="rgba(0, 0, 0, 0.3)"
               visible={state.loadingScreen}
-              customIndicator={customIndicator}
+              color = "#60993A"
             />
 
               {searchBar}

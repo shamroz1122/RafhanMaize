@@ -4,13 +4,20 @@ import { Container, Content, Button,Card, CardItem, Text,Icon,Right } from 'nati
 
 
 function Home(props){
-
+  if(Platform.OS==='android')
+  {
+    var cardHeight = 105
+  }else{
+    var cardHeight = 125
+  }
+   
     useEffect( ()=>{
-
+      
       if(Platform.OS==='android')
       {
         StatusBar.setBarStyle( 'light-content',true)
         StatusBar.setBackgroundColor("#333333")
+       
       }
       
       },[])
@@ -42,11 +49,11 @@ function Home(props){
      return (
         <Container style={{backgroundColor:'#F5F5F5'}}>
 
-          <Content padder>
+          <Content padder contentContainerStyle={{ flexGrow: 1 }}>
           <Card> 
       
              <TouchableOpacity activeOpacity={1} onPress={()=>props.navigation.navigate('NewOrders') }>
-                   <CardItem   style={{height:95,backgroundColor:'#508630',borderRadius:0}}>
+                   <CardItem   style={{height:cardHeight,backgroundColor:'#508630',borderRadius:0}}>
                 <View style={styles.cardItemStyle}> 
                       <Text style={styles.cardTextStyle}>
                         NEW ORDERS
@@ -61,7 +68,7 @@ function Home(props){
             </TouchableOpacity>
 
             <TouchableOpacity activeOpacity={1} onPress={()=>props.navigation.navigate('MyOrders') }>
-            <CardItem  style={{height:95,backgroundColor:'#415927',borderRadius:0}}>
+            <CardItem  style={{height:cardHeight,backgroundColor:'#415927',borderRadius:0}}>
             <View style={styles.cardItemStyle}>
                   <Text style={styles.cardTextStyle}>
                     MY ORDERS
@@ -78,7 +85,7 @@ function Home(props){
 
 
             <TouchableOpacity activeOpacity={1} onPress={()=>props.navigation.navigate('MyProducts') }>
-            <CardItem  style={{height:95,backgroundColor:'#B85D26',borderRadius:0}}>
+            <CardItem  style={{height:cardHeight,backgroundColor:'#B85D26',borderRadius:0}}>
             <View style={styles.cardItemStyle}>
                   <Text style={styles.cardTextStyle}>
                       MY PRODUCTS
@@ -93,7 +100,7 @@ function Home(props){
             </TouchableOpacity>
 
             <TouchableOpacity activeOpacity={1} onPress={()=>props.navigation.navigate('MyCustomers') }>
-            <CardItem  style={{height:95,backgroundColor:'#968223',borderRadius:0}}>
+            <CardItem  style={{height:cardHeight,backgroundColor:'#968223',borderRadius:0}}>
             <View style={styles.cardItemStyle}>
                 <Text style={styles.cardTextStyle}>
                     MY CUSTOMERS
@@ -107,7 +114,7 @@ function Home(props){
             </CardItem>
             </TouchableOpacity>
           <TouchableOpacity activeOpacity={1} onPress={()=>props.navigation.navigate('MyProfile') }>
-            <CardItem   style={{height:95,backgroundColor:'#7C212A',borderRadius:0}}>
+            <CardItem   style={{height:cardHeight,backgroundColor:'#7C212A',borderRadius:0}}>
             <View style={styles.cardItemStyle}>
                   <Text style={styles.cardTextStyle}>
                       MY PROFILE

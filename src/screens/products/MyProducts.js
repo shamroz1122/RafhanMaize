@@ -5,7 +5,7 @@ import { connect } from 'react-redux'
 import { getAllProducts } from '../../redux/actions/productActions'
 import { searchProducts } from '../../redux/actions/productActions'
 import Spinner from 'react-native-loading-spinner-overlay';
-import loaderImage from '../../../assets/loader-gif.gif'
+//import loaderImage from '../../../assets/loader-gif.gif'
 
 function MyProducts(props) {
 
@@ -298,7 +298,7 @@ function MyProducts(props) {
 
 
 
-    const customIndicator = <Image source={loaderImage} style={{height: 50, width: 50,position:'absolute'}}/>
+   // const customIndicator = <Image source={loaderImage} style={{height: 50, width: 50,position:'absolute'}}/>
   
     return (
      <Container style={{backgroundColor:"#DFEED7"}}>
@@ -322,7 +322,7 @@ function MyProducts(props) {
            <Spinner
               overlayColor="rgba(0, 0, 0, 0.3)"
               visible={state.loadingScreen}
-              customIndicator={customIndicator}
+              color = "#60993A"
             />
   
          <Modal

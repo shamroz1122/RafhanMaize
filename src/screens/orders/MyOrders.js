@@ -7,7 +7,7 @@ import { getPendingOrders } from '../../redux/actions/orderActions'
 import { searchDeliveredOrder } from '../../redux/actions/orderActions'
 import { searchPendingOrder } from '../../redux/actions/orderActions'
 import Spinner from 'react-native-loading-spinner-overlay';
-import loaderImage from '../../../assets/loader-gif.gif'
+//import loaderImage from '../../../assets/loader-gif.gif'
 
 function MyOrders(props) {
 
@@ -365,8 +365,6 @@ function MyOrders(props) {
           if(state.searchFromDB!='')
           {
 
-              
-          
                   setState((state)=>({
                   ...state,
                   loadingScreen:true
@@ -384,13 +382,11 @@ function MyOrders(props) {
       
           }
           
-  
       }
 
     const onRefreshPending = React.useCallback(() => {
     
       setRefreshing(true);
-
 
       if(state.isSearchPending)
       {
@@ -474,7 +470,7 @@ function MyOrders(props) {
       )
     }
 
-    const customIndicator = <Image source={loaderImage} style={{height: 50, width: 50,position:'absolute'}}/>
+   // const customIndicator = <Image source={loaderImage} style={{height: 50, width: 50,position:'absolute'}}/>
   
 
     return (
@@ -503,7 +499,7 @@ function MyOrders(props) {
         <Spinner
               overlayColor="rgba(0, 0, 0, 0.3)"
               visible={state.loadingScreen}
-              customIndicator={customIndicator}
+              color = "#60993A"
             />
 
 

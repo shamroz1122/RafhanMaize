@@ -5,7 +5,7 @@ import { AnimatedCircularProgress } from 'react-native-circular-progress';
 import { connect } from 'react-redux'
 import { getDashboardSats } from '../../redux/actions/dashboardActions'
 import Spinner from 'react-native-loading-spinner-overlay';
-import loaderImage from '../../../assets/loader-gif.gif'
+//import loaderImage from '../../../assets/loader-gif.gif'
 
 const Dashboard = (props) => {
 
@@ -113,7 +113,7 @@ const Dashboard = (props) => {
         bottomStatsInnerTextStyle:{
           color:'#fff',
           textAlign:'center',
-          fontSize:22,
+          fontSize:16,
           fontWeight:'bold',
        
           
@@ -196,7 +196,7 @@ const Dashboard = (props) => {
     //     },
 
     // ];
-    const customIndicator = <Image source={loaderImage} style={{height: 50, width: 50,position:'absolute'}}/>
+   // const customIndicator = <Image source={loaderImage} style={{height: 50, width: 50,position:'absolute'}}/>
   
   return (
        <Container style={styles.container}>
@@ -205,10 +205,10 @@ const Dashboard = (props) => {
             <Spinner
               overlayColor="rgba(0, 0, 0, 0.3)"
               visible={state.loadingScreen}
-              customIndicator={customIndicator}
+              color = "#60993A"
             />
            
-          <Content>
+          <Content contentContainerStyle={{ flexGrow: 1 }}>
      
               <View style={styles.firstTwoCardsStyle}>
                  <View style={styles.cardSize}>

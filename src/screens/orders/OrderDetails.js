@@ -4,7 +4,7 @@ import { Container, Content, Card, CardItem,Text, Body } from "native-base"
 import { connect } from 'react-redux'
 import { getOrderDetail } from '../../redux/actions/orderActions'
 import Spinner from 'react-native-loading-spinner-overlay';
-import loaderImage from '../../../assets/loader-gif.gif'
+//import loaderImage from '../../../assets/loader-gif.gif'
 import uuid from 'uuid/v1';
 
 
@@ -85,7 +85,7 @@ const OrderDetails = (props) => {
 
 
 
-        const customIndicator = <Image source={loaderImage} style={{height: 50, width: 50,position:'absolute'}}/>
+       // const customIndicator = <Image source={loaderImage} style={{height: 50, width: 50,position:'absolute'}}/>
   
          
                  
@@ -136,7 +136,7 @@ const OrderDetails = (props) => {
                   <Spinner
                   overlayColor="rgba(0, 0, 0, 0.3)"
                   visible={state.loadingScreen}
-                  customIndicator={customIndicator}
+                  color = "#60993A"
                   />
 
               <Card style={{borderRadius:10,elevation:4}}>

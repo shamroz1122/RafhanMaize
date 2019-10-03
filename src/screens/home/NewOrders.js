@@ -8,7 +8,7 @@ import { getOrderNumber } from '../../redux/actions/customerActions'
 import { getSelectedProducts } from '../../redux/actions/customerActions'
 import { addOrder } from '../../redux/actions/orderActions'
 import SpinnerNew from 'react-native-loading-spinner-overlay';
-import loaderImage from '../../../assets/loader-gif.gif'
+//import loaderImage from '../../../assets/loader-gif.gif'
 
 
 
@@ -444,7 +444,8 @@ function NewOrder(props){
         backgroundColor:'#ffffff',
         borderRadius:5,
         alignItems:'center',
-        justifyContent:'center'
+        justifyContent:'center',
+        fontSize:12
      
        },
        disabledInput : {
@@ -548,10 +549,11 @@ function NewOrder(props){
                          <Item picker style={{border:'none'}}>
                             <Picker
                               mode="dropdown"
-                            
+                              textStyle={{fontSize:10,paddingRight:5 }}
+                              itemTextStyle={{ color: '#788ad2' }}
                               iosIcon={<Icon name="arrow-down" />}
                               placeholder="Product Name"
-                              placeholderStyle={{ color: "#777777" }}
+                              placeholderStyle={{ color: "#777777",fontSize:12 }}
                               placeholderIconColor="#777777" 
                               selectedValue={orderDetail.product_id}
                               onValueChange={(text)=>onChangeOrderDetail1(text,orderDetail.key)}
@@ -594,7 +596,7 @@ function NewOrder(props){
             )
         })
 
-        const customIndicator = <Image source={loaderImage} style={{height: 50, width: 50,position:'absolute'}}/>
+      //  const customIndicator = <Image source={loaderImage} style={{height: 50, width: 50,position:'absolute'}}/>
 
     return (
 
@@ -603,7 +605,7 @@ function NewOrder(props){
         <SpinnerNew
               overlayColor="rgba(0, 0, 0, 0.3)"
               visible={state.loadingScreen}
-              customIndicator={customIndicator}
+              color = "#60993A"
             />
 
                 <Content>

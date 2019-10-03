@@ -12,7 +12,7 @@ function privacyPolicy(){
         }
       })
 
-    useEffect( ()=>{
+    useEffect(()=>{
 
         if(Platform.OS==='android')
         {
@@ -26,7 +26,7 @@ function privacyPolicy(){
     return (
         <View style={{flex: 1, flexDirection:'column'}}>
            <WebView
-                source={{uri: 'https://ranksol.com/'}}
+                source={{uri: 'https://www.ingredionincorporated.com/legal/privacy.html'}}
                 javaScriptEnabled={true}
                 domStorageEnabled={true}
                 startInLoadingState={true}

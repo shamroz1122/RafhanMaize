@@ -5,7 +5,7 @@ import uploadImage from '../../../assets/image_upload.png'
 import { connect } from 'react-redux'
 import { getCustomerDetail } from '../../redux/actions/customerActions'
 import Spinner from 'react-native-loading-spinner-overlay';
-import loaderImage from '../../../assets/loader-gif.gif'
+//import loaderImage from '../../../assets/loader-gif.gif'
 
 const Corporation = (props) => {
 
@@ -90,7 +90,7 @@ const Corporation = (props) => {
       })
 
   
-      const customIndicator = <Image source={loaderImage} style={{height: 50, width: 50,position:'absolute'}}/>
+      //const customIndicator = <Image source={loaderImage} style={{height: 50, width: 50,position:'absolute'}}/>
   
 
     return (
@@ -99,7 +99,7 @@ const Corporation = (props) => {
             <Spinner
               overlayColor="rgba(0, 0, 0, 0.3)"
               visible={state.loadingScreen}
-              customIndicator={customIndicator}
+              color = "#60993A"
             />
 
                <Card>

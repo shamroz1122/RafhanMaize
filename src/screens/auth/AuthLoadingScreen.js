@@ -5,7 +5,6 @@ import setAuthToken from '../../utils/setAuthToken';
 import setBasePath from "../../utils/setBasePath";
 import jwt_decode from "jwt-decode";
 import { connect } from 'react-redux'
-import loaderImage from '../../../assets/loader-gif.gif'
 import {Image} from 'react-native'
 import Spinner from 'react-native-loading-spinner-overlay';
 
@@ -53,12 +52,12 @@ class AuthLoadingScreen extends React.Component {
 
   // Render any loading content that you like here
   render() {
-    const customIndicator = <Image source={loaderImage} style={{height: 50, width: 50,position:'absolute'}}/>
+    //const customIndicator = <Image source={loaderImage} style={{height: 50, width: 50,position:'absolute'}}/>
     return (
       <View style={{flex:1,justifyContent:'center',alignItems:'center'}}>
         <Spinner
           visible={this.state.isReady}
-          customIndicator={customIndicator}
+          color = "#60993A"
         />
         <StatusBar barStyle="default" />
       </View>
