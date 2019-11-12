@@ -3,9 +3,10 @@ import Dashboard from '../screens/dashboard/Dashboard';
 import MyOrders from '../screens/orders/MyOrders';
 import OrderDetails from '../screens/orders/OrderDetails';
 import MyProducts from '../screens/products/MyProducts';
-import Reports from '../screens/reports/Reports';
+import Reports from '../screens/reports/Reports'; 
 import MyCustomers from '../screens/customers/MyCustomers';
 import NewOrders from '../screens/home/NewOrders';
+import EditOrder from '../screens/orders/EditOrder';
 import MyProfile from '../screens/home/Profile';
 import Home from '../screens/home/Home';
 import PrivacyPolicy from '../screens/privacyPolicy/privacyPolicy';
@@ -19,8 +20,6 @@ import {Image,Text,Animated, Easing,Platform} from 'react-native'
 import {Thumbnail,Icon} from 'native-base'
 import { Ionicons, AntDesign,Entypo,FontAwesome,FontAwesome5 } from '@expo/vector-icons';
 import store from '../redux/store'
-
-
 
 var URL = ""
 
@@ -64,7 +63,7 @@ const HomeStack = createStackNavigator({
       const state = store.getState();
       const userImage = state.auth.user.user_profile_img
       URL = "http://order.rafhanmaize.com/dev"+userImage;
-      
+
       return {
         headerTitle: <Image source={Rafhanlogo} style={{ height: 60,width: 100,marginLeft:Platform.OS === 'android' ? 70 : 0,marginBottom:Platform.OS === 'android' ? 20 : 10}} />,
         headerLeft:(
@@ -79,15 +78,16 @@ const HomeStack = createStackNavigator({
   },
   NewOrders:{screen:NewOrders,
     navigationOptions:({ navigation }) => {
+     
       return {
-        headerTitle: <Text style={{color:"#ffffff",paddingBottom:25,fontSize:22}}>Add Order</Text>,
+        headerTitle: <Text style={{color:"#ffffff",paddingBottom:25,fontSize:22}}> Add Order </Text>,
         headerStyle:{height:30,backgroundColor:'#6DB33F',color:"#ffffff"},
         headerBackImage: Platform.OS === 'android'? <Icon type="AntDesign" style={{fontSize:20,color:'#ffffff',marginBottom:20}} small name="left"  /> :null,
         headerTintColor: '#ffffff',
       }
     }
   },
-  
+
   MyProfile:{screen:MyProfile,
     navigationOptions:({ navigation }) => {
       return {
@@ -152,7 +152,17 @@ const MyOrdersStack = createStackNavigator({
         headerBackImage: Platform.OS === 'android'? <Icon type="AntDesign" style={{fontSize:20,color:'#ffffff',marginBottom:20}} small name="left"  /> :null,
         headerTintColor: '#ffffff',
       }
-    }}
+    }},
+     EditOrder:{screen:EditOrder,
+      navigationOptions:({ navigation }) => {
+        return {
+          headerTitle: <Text style={{color:"#ffffff",paddingBottom:25,fontSize:22}}> Edit Order </Text>,
+          headerStyle:{height:30,backgroundColor:'#6DB33F',color:"#ffffff"},
+          headerBackImage: Platform.OS === 'android'? <Icon type="AntDesign" style={{fontSize:20,color:'#ffffff',marginBottom:20}} small name="left"  /> :null,
+          headerTintColor: '#ffffff',
+        }
+      }
+    }
 },{
   initialRouteName: 'MyOrders',
   headerMode: 'screen',

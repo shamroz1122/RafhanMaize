@@ -5,7 +5,6 @@ import setAuthToken from '../../utils/setAuthToken';
 import setBasePath from "../../utils/setBasePath";
 import jwt_decode from "jwt-decode";
 import { connect } from 'react-redux'
-import {Image} from 'react-native'
 import Spinner from 'react-native-loading-spinner-overlay';
 
 class AuthLoadingScreen extends React.Component {
@@ -13,7 +12,7 @@ class AuthLoadingScreen extends React.Component {
     super(props);
     this._AppAsync();
     this.state = {
-      isReady: true,
+      isReady: false,
     };
   }
 

@@ -48,7 +48,7 @@ function Login(props){
                     setState({...state,isLoading:false})
                 }
 
-        },[props.authError,props.isAuthenticated,props.user]) 
+        },[props.authError,props.isAuthenticated,props.user,props.error]) 
 
     const styles = StyleSheet.create({
         container:{
@@ -155,6 +155,7 @@ const mapStateToProps = (state) => {
         authError: state.auth.authError,
         isAuthenticated: state.auth.isAuthenticated,
         user: state.auth.user,
+        error:state.auth.error
     }
 }
 

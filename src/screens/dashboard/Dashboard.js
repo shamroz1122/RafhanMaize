@@ -1,5 +1,5 @@
 import React, {useEffect,useState} from 'react'
-import { View, Text,StyleSheet,StatusBar,Platform,Image } from 'react-native'
+import { View, Text,StyleSheet,StatusBar,Platform,TouchableOpacity } from 'react-native'
 import { Container,H1,Content,H2, Card, CardItem, Icon, Left, Body } from 'native-base';
 import { AnimatedCircularProgress } from 'react-native-circular-progress';
 import { connect } from 'react-redux'
@@ -212,6 +212,7 @@ const Dashboard = (props) => {
      
               <View style={styles.firstTwoCardsStyle}>
                  <View style={styles.cardSize}>
+                 <TouchableOpacity onPress={()=>props.navigation.navigate('MyOrders',{tab:1})}>
                      <Card>
                         <CardItem bordered>
                           <Left>
@@ -227,8 +228,10 @@ const Dashboard = (props) => {
                           </Left>
                         </CardItem>
                       </Card>
+                     </TouchableOpacity>
                   </View>
                   <View style={styles.cardSize}>
+                      <TouchableOpacity onPress={() => props.navigation.navigate('MyOrders',{tab:0})}>
                           <Card>   
                               <CardItem bordered>
                               <Left>
@@ -242,6 +245,7 @@ const Dashboard = (props) => {
                                 </Left>
                               </CardItem>
                           </Card>
+                      </TouchableOpacity>
                   </View>
               </View>
           
@@ -263,6 +267,7 @@ const Dashboard = (props) => {
                   </Card>
                </View> 
                <View style={styles.cardSize}>
+                 <TouchableOpacity onPress={() => props.navigation.navigate('MyCustomers')}>
                     <Card>
                         <CardItem bordered>
                         <Left>
@@ -276,6 +281,7 @@ const Dashboard = (props) => {
                           </Left>
                         </CardItem>
                     </Card>
+                  </TouchableOpacity>
                </View> 
             </View>
             <View style={styles.thirdCardStyle}>

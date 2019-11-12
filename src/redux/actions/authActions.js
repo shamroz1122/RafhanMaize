@@ -13,10 +13,10 @@ export const login = Data => dispatch => {
         .then((res) => {
               
                if(res.data.success == false)
-               {
+               {       
                         dispatch({type: 'LOGIN_ERROR',msg:res.data.message[0]})
                }else{
-                
+                       
                         // Set token to localStorage
                         const token = res.data.token;
                         AsyncStorage.setItem("User", JSON.stringify(res.data.user));
@@ -28,7 +28,7 @@ export const login = Data => dispatch => {
 
         })
         .catch((err) => {
-    
+                console.log("helloe man: ",err)
                 dispatch({type: 'LOGIN_ERROR',msg:'Invalid Credentials'})
         }
     );

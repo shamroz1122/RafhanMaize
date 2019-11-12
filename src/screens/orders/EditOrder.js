@@ -6,8 +6,11 @@ import { connect } from 'react-redux'
 import { getMyAllCustomers } from '../../redux/actions/customerActions'
 import { getOrderNumber } from '../../redux/actions/customerActions'
 import { getSelectedProducts } from '../../redux/actions/customerActions'
-import { addOrder } from '../../redux/actions/orderActions'
+import { editOrderDetail } from '../../redux/actions/orderActions'
+import { updateOrder } from '../../redux/actions/orderActions'
+import { ClearMessages } from '../../redux/actions/orderActions'
 import SpinnerNew from 'react-native-loading-spinner-overlay';
+
 //import loaderImage from '../../../assets/loader-gif.gif'
 
 
@@ -30,14 +33,11 @@ function NewOrder(props){
           selectedProducts:[],
           order_date:'',
           orderDateLabel:'',
-        
           delivery_date:'',
-         
           orderDetails:[
              {product_id:'',productName:'', uom:'BG',qty:'',delivery_date:'',key:uuid()}
-          ]
-
-         
+          ],
+        
     })
     const [paging, setPaging] = useState({
       page:1
@@ -51,18 +51,22 @@ function NewOrder(props){
           StatusBar.setBackgroundColor("#60993A")
         }
   
-
+     
        props.getMyAllCustomers()
        props.getOrderNumber()
    
+    //    const params =  props.navigation.getParam('order_id')
+    //    let orderid = {'order_id':params.order_id}
+    //    props.editOrderDetail(orderid)
+    
 
         const today = new Date();  
         const currentDate = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
         setState((state)=>({
           ...state,
           securityDepositer: 'Security Depositer',
-          orderDateLabel: 'Order Date '+currentDate,
-          order_date: currentDate
+        //  orderDateLabel: 'Order Date '+currentDate,
+         // order_date: currentDate
           
         }))
        
@@ -77,12 +81,71 @@ function NewOrder(props){
             setState((state)=>({
               ...state,
                  customers: props.customers,
-                 loadingScreen:false,
             }))
+
+            const params =  props.navigation.getParam('order_id')
+            let orderid = {'orderid':params.order_id}
+         
+             props.editOrderDetail(orderid)
           }
        
       },[props.customers])
 
+      const onSetDeliveryDate = (newDate) => {
+        var deliveryDate = ''
+        if(typeof(newDate)=='object' && newDate!=null)
+        {
+          
+           deliveryDate = newDate.getFullYear()+'-'+(newDate.getMonth()+1)+'-'+newDate.getDate();
+        }else{
+    
+          deliveryDate = newDate
+        }
+
+     
+        
+      setState((state)=>({
+            ...state,
+            delivery_date: deliveryDate,
+            orderDetails: state.orderDetails.map(el => ( {...el, delivery_date:deliveryDate}))
+          }))
+
+      }
+
+
+
+      useEffect( ()=>{
+  
+        if(Object.keys(props.editOrderDetails).length)
+        {
+
+          var delvDate =  props.editOrderDetails.delivery_date
+      
+      
+          const params =  props.navigation.getParam('order_id')
+          setState((state)=>({
+            ...state,
+               loadingScreen:false,
+               note:props.editOrderDetails.note,
+               po_number:props.editOrderDetails.po_number,
+               order_date:props.editOrderDetails.order_date,
+               partner_id:props.editOrderDetails.customer,
+               category:props.editOrderDetails.product_category,
+               delivery_date: props.editOrderDetails.delivery_date,
+               orderNumber:params.order_id,
+               orderNumberLabel: 'Order #: 0000'+params.order_id,
+               orderDateLabel: 'Order Date '+props.editOrderDetails.order_date,
+               orderDetails:props.editOrderDetails.products
+
+          }))
+
+          let data = {customer_id:props.editOrderDetails.customer,cat_id:props.editOrderDetails.product_category}
+
+          props.getSelectedProducts(data)
+          onSetDeliveryDate(delvDate)
+        }
+     
+    },[props.editOrderDetails])
 
       useEffect( ()=>{
 
@@ -91,37 +154,35 @@ function NewOrder(props){
           setState((state)=>({
             ...state,
                categories: props.categories,
-               orderNumber:props.orderNumber,
-               orderNumberLabel: 'Order #: 0000'+props.orderNumber,
+             //  orderNumber:props.orderNumber,
+             //  orderNumberLabel: 'Order #: 0000'+props.orderNumber,
            
           }))
+          const params =  props.navigation.getParam('order_id')
+          let orderid = {'orderid':params.order_id}
+       
+           props.editOrderDetail(orderid)
         }
      
     },[props.orderNumber,props.categories])
 
     useEffect( ()=>{
 
-      if(props.orderSuccess)
+      if(props.orderUpdateSuccess)
       {
-        showToast(props.orderSuccess,'success')
-        var ordernum = Number(props.orderNumber)
-        ordernum = ordernum+1
-        setState((state)=>({
-          ...state,
-          orderDetails: [{product_id:'',productName:'', uom:'BG',qty:'',delivery_date:'',key:uuid()}],
-          partner_id:'0',
-          category:'0',
-          po_number:'',
-          note:'',
-          orderNumberLabel: 'Order #: 0000'+ordernum,
-        }))
+        showToast(props.orderUpdateSuccess,'success')
         showSpinner(false)
-      }else if(props.orderFail){
-        showToast(props.orderFail,'danger')
+        props.ClearMessages()
+        props.navigation.navigate('MyOrders');
+      
+      }else if(props.orderUpdateFail){
+      
+        showToast(props.orderUpdateFail,'danger')
         showSpinner(false)
+        props.ClearMessages()
       }
    
-  },[props.orderSuccess,props.orderFail])
+  },[props.orderUpdateSuccess,props.orderUpdateFail])
 
          useEffect( ()=>{
 
@@ -171,17 +232,7 @@ function NewOrder(props){
                 )
           }
 
-      const onSetDeliveryDate = (newDate) => {
-
-      let deliveryDate = newDate.getFullYear()+'-'+(newDate.getMonth()+1)+'-'+newDate.getDate();
-        
-      setState((state)=>({
-            ...state,
-            delivery_date: deliveryDate,
-            orderDetails: state.orderDetails.map(el => ( {...el, delivery_date:deliveryDate}))
-          }))
-
-      }
+     
 
       const onChangePoNumber = (text) =>{
 
@@ -322,16 +373,18 @@ function NewOrder(props){
       else{
 
         showSpinner(true)
+        const params =  props.navigation.getParam('order_id')
         let orderdata = {
           po_number:state.po_number,
           note:state.note,
           order_date:state.order_date,
+          category:state.category,
           partner_id:state.partner_id,
           delivery_date:state.delivery_date,
-          products:state.orderDetails,
-          category:state.category
+          orderid:params.order_id,
+          products:state.orderDetails
         }
-        props.addOrder(orderdata)
+        props.updateOrder(orderdata)
       }
     }
 
@@ -631,12 +684,14 @@ function NewOrder(props){
                                     placeholderTextColor = "#777777"
                                     keyboardType='number-pad'
                                     onChangeText={onChangePoNumber}
+                                    value={state.po_number}
                                 />
                                 <TextInput 
                                     style={styles.input}
                                     placeholder="Note"
                                     placeholderTextColor = "#777777"
                                     onChangeText={onChangeNote}
+                                    value={state.note}
                                 />
 
                                 
@@ -702,7 +757,8 @@ function NewOrder(props){
                                               onDateChange={onSetDeliveryDate}
                                               disabled={false}
                                               animationType="slide"
-                                          
+                                              placeHolderText={state.delivery_date?state.delivery_date:''}
+                                             
                                               />
                                       </View>
                                       
@@ -730,8 +786,10 @@ const mapStateToProps = (state) => {
     categories: state.customer.categories,
     selectedProducts: state.customer.selectedProducts,
     isSelectedData:state.customer.isSelectedData,
-    orderSuccess:state.order.msg,
-    orderFail:state.order.error,
+    orderUpdateSuccess:state.order.updatemsg,
+    orderUpdateFail:state.order.updateerror,
+    editOrderDetails:state.order.editOrderDetails,
+    update_order:state.order.update_order
   }
 }
 
@@ -740,8 +798,9 @@ const mapDispatchToProps = (dispatch) => {
     getMyAllCustomers: () => dispatch(getMyAllCustomers()),
     getOrderNumber: () => dispatch(getOrderNumber()),
     getSelectedProducts: (data) => dispatch(getSelectedProducts(data)),
-    addOrder: (data) => dispatch(addOrder(data)),
-  
+    updateOrder: (data) => dispatch(updateOrder(data)),
+    editOrderDetail:(data) => dispatch(editOrderDetail(data)),
+    ClearMessages:()=>dispatch(ClearMessages())
   }
 }
 

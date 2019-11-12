@@ -2,6 +2,7 @@ const initState = {
   authError: null,
   user:{},
   isAuthenticated: false,
+  error:false
 }
 
 const authReducer = (state = initState, action) => {
@@ -9,7 +10,8 @@ const authReducer = (state = initState, action) => {
     case 'LOGIN_ERROR':
     return {
       ...state,
-      authError: action.msg
+      authError: action.msg,
+      error:!state.error
     } 
     case 'LOGIN_SUCCESS':
       return {
@@ -24,6 +26,7 @@ const authReducer = (state = initState, action) => {
         authError:null,
         user:{},
         isAuthenticated: false,
+       
       }
       default:
         return state
